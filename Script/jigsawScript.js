@@ -331,8 +331,9 @@ e.preventDefault();//Stops the default behavior
             var index = selectedBlock.no;
             //   alert(index);
 
-alert("index" + index + " X" + e.pageX + " -" + selectedBlock.x);
-            var block = GetImageBlock(blockList, e.pageX, e.pageY);
+//alert("index" + index + " X" + e.pageX + " -" + selectedBlock.x);
+//            var block = GetImageBlock(blockList, e.pageX, e.pageY);
+            var block = GetImageBlock(blockList, selectedBlock.x, selectedBlock.Y);
             if (block) {
 
                 var blockOldImage = GetImageBlockOnEqual(imageBlockList, block.x, block.y);
