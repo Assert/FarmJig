@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="Script/jigsawScript.js"></script>
+    <script type="text/javascript">
+
+        var game = null;
+        var imageID = "img1";
+        var totalRows = 3;
+        var totalColumns = 3;
+     
+        function LoadGame() {
+            var canvasID = "canJigsaw";
+
+            game = new jigsaw(canvasID, imageID, totalRows, totalColumns);
+
+            game.initDrawing();
+        }
+
+     
+    </script>
+</head>
+<body onload="LoadGame();">
+   
+    <canvas id="canJigsaw" width="850" height="575" style="border: black solid 2px;"></canvas>
+
+    <img id="img1" width="1" height="1" src="Images/Erle.jpg"></img>
+
+</body>
+</html>
