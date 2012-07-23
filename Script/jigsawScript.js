@@ -331,7 +331,7 @@ e.preventDefault();//Stops the default behavior
             var index = selectedBlock.no;
             //   alert(index);
 
-alert(e.pageX);
+alert("index" + index + " X" + e.pageX + " -" + selectedBlock.x);
             var block = GetImageBlock(blockList, e.pageX, e.pageY);
             if (block) {
 
