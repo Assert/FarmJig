@@ -68,7 +68,7 @@ function jigsaw(canvasID, imageID, rows,columns) {
         canvas.onmousemove = handleOnMouseMove;
 
 
-        e.preventDefault();//Stops the default behavior
+        //e.preventDefault();//Stops the default behavior
 
         canvas.addEventListener("touchstart", handleOnMouseDown, false);
         canvas.addEventListener("touchend", handleOnMouseUp, false);
