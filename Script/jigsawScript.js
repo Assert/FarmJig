@@ -68,7 +68,7 @@ function jigsaw(canvasID, imageID, rows,columns) {
         canvas.onmousemove = handleOnMouseMove;
 
 
-        //e.preventDefault();//Stops the default behavior
+        //  
 
         canvas.addEventListener("touchstart", handleOnMouseDown, false);
         canvas.addEventListener("touchend", handleOnMouseUp, false);
@@ -308,7 +308,7 @@ function jigsaw(canvasID, imageID, rows,columns) {
     }
 
     function handleOnMouseDown(e) {
-
+e.preventDefault();//Stops the default behavior
         // remove old selected
         if (selectedBlock != null) {
 
@@ -326,7 +326,7 @@ function jigsaw(canvasID, imageID, rows,columns) {
 
 
     function handleOnMouseUp(e) {
-
+e.preventDefault();//Stops the default behavior
         if (selectedBlock) {
             var index = selectedBlock.no;
             //   alert(index);
@@ -357,7 +357,7 @@ function jigsaw(canvasID, imageID, rows,columns) {
     }
 
     function handleOnMouseMove(e) {
-
+e.preventDefault();//Stops the default behavior
         if (selectedBlock) {
 
             selectedBlock.x = e.pageX  - 25;
