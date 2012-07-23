@@ -67,11 +67,32 @@ function jigsaw(canvasID, imageID, rows,columns) {
         canvas.onmouseout = handleOnMouseOut;
         canvas.onmousemove = handleOnMouseMove;
 
+
+        e.preventDefault();//Stops the default behavior
+
+        canvas.addEventListener("touchstart", handleOnMouseDown, false);
+        canvas.addEventListener("touchend", handleOnMouseUp, false);
+        canvas.addEventListener("touchmove", handleOnMouseMove, false);
+
+
         image1 = document.getElementById(imageID);
 
 
         initializeNewGame();
     };
+    /*
+    function doTouchStart(){
+         event.preventDefault();
+        
+        canvas_x = event.targetTouches[0].pageX;
+        canvas_y = event.targetTouches[0].pageY;
+
+        alert(canvas_x);
+        
+        
+    }
+    */
+    
     
     function initializeNewGame() {
 
