@@ -333,9 +333,8 @@ e.preventDefault();//Stops the default behavior
 
 //alert("index" + index + " X" + e.pageX + " -" + selectedBlock.x);
 //            var block = GetImageBlock(blockList, e.pageX, e.pageY);
-            var block = GetImageBlock(blockList, selectedBlock.x, selectedBlock.Y);
+            var block = GetImageBlock(blockList, selectedBlock.x, selectedBlock.y);
             if (block) {
-
                 var blockOldImage = GetImageBlockOnEqual(imageBlockList, block.x, block.y);
                 if (blockOldImage == null) {
                     imageBlockList[index].x = block.x;
@@ -385,7 +384,7 @@ e.preventDefault();//Stops the default behavior
         return Math.round(val);
     }
 
-
+//Find block to move
     function GetImageBlock(list, x, y) {
 
         //for (var i = 0; i < list.length; i++) {
@@ -402,7 +401,7 @@ e.preventDefault();//Stops the default behavior
                 (x >= x1 && x <= x2) &&
                 (y >= y1 && y <= y2)
             ) {
-                //alert("found: " + imgBlock.no);
+              //  alert("found: " + imgBlock.no);
 
                 var img = new imageBlock(imgBlock.no, imgBlock.x, imgBlock.y);
                 //drawImageBlock(img);
@@ -416,13 +415,11 @@ e.preventDefault();//Stops the default behavior
 
 
     function GetImageBlockOnEqual(list, x, y) {
-
         for (var i = 0; i < list.length; i++) {
             var imgBlock = list[i];
 
             var x1 = imgBlock.x;
             var y1 = imgBlock.y;
-
             if (
                 (x == x1) &&
                 (y == y1)
