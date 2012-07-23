@@ -326,7 +326,7 @@ e.preventDefault();//Stops the default behavior
 
 
     function handleOnMouseUp(e) {
-e.preventDefault();//Stops the default behavior
+//e.preventDefault();//Stops the default behavior
         if (selectedBlock) {
             var index = selectedBlock.no;
             //   alert(index);
