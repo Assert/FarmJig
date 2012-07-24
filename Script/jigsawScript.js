@@ -80,18 +80,7 @@ function jigsaw(canvasID, imageID, rows,columns) {
 
         initializeNewGame();
     };
-    /*
-    function doTouchStart(){
-         event.preventDefault();
-        
-        canvas_x = event.targetTouches[0].pageX;
-        canvas_y = event.targetTouches[0].pageY;
-
-        alert(canvas_x);
-        
-        
-    }
-    */
+    
     
     
     function initializeNewGame() {
@@ -106,34 +95,6 @@ function jigsaw(canvasID, imageID, rows,columns) {
         DrawGame();
     }
 
-/*
-    this.showPreview = function () {
-
-        var x1 = 20;
-        var y1 = 20;
-        var width = BLOCK_IMG_WIDTH - (x1 * 2);
-        var height = BLOCK_IMG_HEIGHT - (y1 * 2);
-
-        ctx.save();
-
-        ctx.drawImage(image1, 0, 0, MAIN_IMG_WIDTH, MAIN_IMG_HEIGHT, x1, y1, width, height);
-
-
-        // DRAE RECTANGLE
-
-        ctx.fillStyle = '#00f'; // blue
-        ctx.strokeStyle = '#f00'; // red
-        ctx.lineWidth = 4;
-
-        ctx.strokeRect(x1 - 2, y1 - 2, width + 4, height + 4);
-
-
-        ctx.restore();
-
-
-    };
-
- */
     function DrawGame() {
 
         clear(ctx);
@@ -286,53 +247,32 @@ function jigsaw(canvasID, imageID, rows,columns) {
     ///////////////////////////////////////// EVENTS
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    function handleOnMouseDbClick(e) {
-
-        // selectedBlock = GetImageBlock(e.pageX, e.pageY);
-        //alert("clicked");
-
-    }
-
-
     function handleOnMouseOut(e) {
-
         // remove old selected
         if (selectedBlock != null) {
-
             imageBlockList[selectedBlock.no].isSelected = false;
             selectedBlock = null;
             DrawGame();
-
         }
-
     }
 
     function handleOnMouseDown(e) {
-e.preventDefault();//Stops the default behavior
+        e.preventDefault();//Stops the default behavior
         // remove old selected
         if (selectedBlock != null) {
-
             imageBlockList[selectedBlock.no].isSelected = false;
-
         }
-
         selectedBlock = GetImageBlock(imageBlockList, e.pageX, e.pageY);
-
         if (selectedBlock) {
             imageBlockList[selectedBlock.no].isSelected = true;
         }
-
     }
 
-
     function handleOnMouseUp(e) {
-//e.preventDefault();//Stops the default behavior
+        //e.preventDefault();//Stops the default behavior
         if (selectedBlock) {
             var index = selectedBlock.no;
-            //   alert(index);
 
-//alert("index" + index + " X" + e.pageX + " -" + selectedBlock.x);
-//            var block = GetImageBlock(blockList, e.pageX, e.pageY);
             var block = GetImageBlock(blockList, selectedBlock.x, selectedBlock.y);
             if (block) {
                 var blockOldImage = GetImageBlockOnEqual(imageBlockList, block.x, block.y);
@@ -358,13 +298,46 @@ e.preventDefault();//Stops the default behavior
     }
 
     function handleOnMouseMove(e) {
-e.preventDefault();//Stops the default behavior
+        e.preventDefault();//Stops the default behavior
         if (selectedBlock) {
+// Position of middle of selected block
+// Position of pointer might be best, but not sure touch can do that
+            var xx = selectedBlock.x + (BLOCK_WIDTH / 2);
+            var yy = selectedBlock.y + (BLOCK_HEIGHT /2);
 
             selectedBlock.x = e.pageX  - 25;
             selectedBlock.y = e.pageY  - 25;
 
+            //DrawGame();
+
+            var index = selectedBlock.no;
+
+            var block = GetImageBlock(blockList, xx, yy);
+            
+            if (block) {
+                
+                var blockOldImage = GetImageBlockOnEqual(imageBlockList, block.x, block.y);
+                if (blockOldImage == null) {
+                    imageBlockList[index].x = block.x;
+                    imageBlockList[index].y = block.y;
+                }
+            }
+            else {
+                imageBlockList[index].x = selectedBlock.x;
+                imageBlockList[index].y = selectedBlock.y;
+            }
+
+            //imageBlockList[index].isSelected = false;
+           // selectedBlock = null;
             DrawGame();
+
+            if (isFinished()) {
+                OnFinished();
+            }
+
+
+
+
 
         }
     }
@@ -384,10 +357,10 @@ e.preventDefault();//Stops the default behavior
         return Math.round(val);
     }
 
-//Find block to move
     function GetImageBlock(list, x, y) {
-
-        //for (var i = 0; i < list.length; i++) {
+        
+        console.log("x"+x+" y"+y);
+        
         for (var i = list.length - 1; i >= 0; i--) {
             var imgBlock = list[i];
 
@@ -397,22 +370,15 @@ e.preventDefault();//Stops the default behavior
             var y1 = imgBlock.y;
             var y2 = y1 + BLOCK_HEIGHT;
 
-            if (
-                (x >= x1 && x <= x2) &&
-                (y >= y1 && y <= y2)
-            ) {
+            if ((x >= x1 && x <= x2) && (y >= y1 && y <= y2)) {
               //  alert("found: " + imgBlock.no);
-
                 var img = new imageBlock(imgBlock.no, imgBlock.x, imgBlock.y);
                 //drawImageBlock(img);
                 return img;
-
             }
         }
-
         return null;
     }
-
 
     function GetImageBlockOnEqual(list, x, y) {
         for (var i = 0; i < list.length; i++) {
@@ -420,41 +386,28 @@ e.preventDefault();//Stops the default behavior
 
             var x1 = imgBlock.x;
             var y1 = imgBlock.y;
-            if (
-                (x == x1) &&
-                (y == y1)
-            ) {
-
+            if ((x == x1) && (y == y1)) {
                 var img = new imageBlock(imgBlock.no, imgBlock.x, imgBlock.y);
                 //drawImageBlock(img);
                 return img;
-
             }
         }
-
         return null;
     }
 
 
 
     function isFinished() {
-
         var total = TOTAL_PIECES;
-
         for (var i = 0; i < total; i++) {
-
             var img = imageBlockList[i];
             var block = blockList[i];
 
-            if (
-                (img.x != block.x) ||
-                (img.y != block.y)
-                ) {
+            if ((img.x != block.x) || (img.y != block.y)) {
+                // If one img is not equal to its block you are not finished
                 return false;
             }
-
         }
-
         return true;
     }
 
