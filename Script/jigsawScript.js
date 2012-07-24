@@ -265,6 +265,8 @@ function jigsaw(canvasID, imageID, rows,columns) {
         selectedBlock = GetImageBlock(imageBlockList, e.pageX, e.pageY);
         if (selectedBlock) {
             imageBlockList[selectedBlock.no].isSelected = true;
+                       //     console.log("Selected " + selectedBlock.no);
+
         }
     }
 
@@ -305,38 +307,41 @@ function jigsaw(canvasID, imageID, rows,columns) {
             var xx = selectedBlock.x + (BLOCK_WIDTH / 2);
             var yy = selectedBlock.y + (BLOCK_HEIGHT /2);
 
-            selectedBlock.x = e.pageX  - 25;
-            selectedBlock.y = e.pageY  - 25;
+           var index = selectedBlock.no;
 
-            //DrawGame();
-
-            var index = selectedBlock.no;
 
             var block = GetImageBlock(blockList, xx, yy);
-            
-            if (block) {
+
+            if(block){
+             //   console.log("Over" + block.no);
                 
-                var blockOldImage = GetImageBlockOnEqual(imageBlockList, block.x, block.y);
-                if (blockOldImage == null) {
+                if(index==block.no){
+                    
+//                    console.log("YES");
+                    
                     imageBlockList[index].x = block.x;
                     imageBlockList[index].y = block.y;
+                    
+                      imageBlockList[index].isSelected = false;
+                        selectedBlock = null;
+                        DrawGame();
+                        if (isFinished()) {
+                            OnFinished();
+                        }
+                }else{
+                    selectedBlock.x = e.pageX  - 25;
+                    selectedBlock.y = e.pageY  - 25;
+
+                    DrawGame();         
                 }
+            
+            }else{
+                selectedBlock.x = e.pageX  - 25;
+                selectedBlock.y = e.pageY  - 25;
+
+                DrawGame();                
             }
-            else {
-                imageBlockList[index].x = selectedBlock.x;
-                imageBlockList[index].y = selectedBlock.y;
-            }
-
-            //imageBlockList[index].isSelected = false;
-           // selectedBlock = null;
-            DrawGame();
-
-            if (isFinished()) {
-                OnFinished();
-            }
-
-
-
+           
 
 
         }
@@ -359,7 +364,7 @@ function jigsaw(canvasID, imageID, rows,columns) {
 
     function GetImageBlock(list, x, y) {
         
-        console.log("x"+x+" y"+y);
+       // console.log("x"+x+" y"+y);
         
         for (var i = list.length - 1; i >= 0; i--) {
             var imgBlock = list[i];
