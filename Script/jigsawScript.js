@@ -106,6 +106,8 @@ function jigsaw(canvasID, imageID, rows,columns) {
         }
     }
 
+
+    //Tegner brikkene før spillet
     function SetImageBlock() {
 
         var total = TOTAL_PIECES;
@@ -115,13 +117,19 @@ function jigsaw(canvasID, imageID, rows,columns) {
         var x1 = BLOCK_IMG_WIDTH + 20;
         var x2 = canvas.width - 50;
         var y2 = BLOCK_IMG_HEIGHT;
+  /*      
+                  var randomX = 610;
+            var randomY = 300;//460;
+  */
+        
+        
+        
         for (var i = 0; i < total; i++) {
 
             var randomX = randomXtoY(x1, x2, 2);
             var randomY = randomXtoY(0, y2, 2);
        
             var imgBlock = new imageBlock(i, randomX, randomY);
-
             imageBlockList.push(imgBlock);
 
             var x = (i % TOTAL_COLUMNS) * BLOCK_WIDTH;
@@ -134,9 +142,27 @@ function jigsaw(canvasID, imageID, rows,columns) {
 
     }
 
+
+
     function drawLines() {
        
-       ctx.strokeStyle = "#e9e9e9";
+        //       ctx.save();
+
+/*
+// Draw preview image
+var eee = image1;
+
+canJigsaw.style.filter       = "alpha(opacity=25);";
+canJigsaw.style.MozOpacity   = 0.25;
+canJigsaw.style.opacity      = 0.25;
+canJigsaw.style.KhtmlOpacity = 0.25;
+
+
+        ctx.drawImage(eee, 0, 0, MAIN_IMG_WIDTH, MAIN_IMG_HEIGHT, 0, 0, BLOCK_IMG_WIDTH, BLOCK_IMG_HEIGHT);
+*/
+       
+//       ctx.strokeStyle = "#e9e9e9";
+       ctx.strokeStyle = "#000000";
         
         ctx.lineWidth = 1;
         ctx.beginPath();
@@ -155,10 +181,19 @@ function jigsaw(canvasID, imageID, rows,columns) {
             ctx.lineTo(600, y);
         }
 
-
         ctx.closePath();
         ctx.stroke();
+
+
+
+
+
+
+
     }
+
+
+
 
     function drawAllImages() {
 
@@ -270,24 +305,29 @@ function jigsaw(canvasID, imageID, rows,columns) {
         }
     }
 
+var MODE = "EASY"; //HARD
+
     function handleOnMouseUp(e) {
-        //e.preventDefault();//Stops the default behavior
+        
+        
+        //In hard mode blocks will snapp to any slot, in easy they will not
+        
         if (selectedBlock) {
             var index = selectedBlock.no;
-
-            var block = GetImageBlock(blockList, selectedBlock.x, selectedBlock.y);
-            if (block) {
-                var blockOldImage = GetImageBlockOnEqual(imageBlockList, block.x, block.y);
-                if (blockOldImage == null) {
-                    imageBlockList[index].x = block.x;
-                    imageBlockList[index].y = block.y;
+            if(MODE=="HARD"){
+                var block = GetImageBlock(blockList, selectedBlock.x, selectedBlock.y);
+                if (block) {
+                    var blockOldImage = GetImageBlockOnEqual(imageBlockList, block.x, block.y);
+                    if (blockOldImage == null) {
+                        imageBlockList[index].x = block.x;
+                        imageBlockList[index].y = block.y;
+                    }
+                }
+                else {
+                    imageBlockList[index].x = selectedBlock.x;
+                    imageBlockList[index].y = selectedBlock.y;
                 }
             }
-            else {
-                imageBlockList[index].x = selectedBlock.x;
-                imageBlockList[index].y = selectedBlock.y;
-            }
-
             imageBlockList[index].isSelected = false;
             selectedBlock = null;
             DrawGame();
@@ -314,8 +354,8 @@ function jigsaw(canvasID, imageID, rows,columns) {
 
             if(block){
              //   console.log("Over" + block.no);
-                
-                if(index==block.no){
+
+                if(index==block.no && MODE!="HARD"){
                     
 //                    console.log("YES");
                     
@@ -325,9 +365,9 @@ function jigsaw(canvasID, imageID, rows,columns) {
                       imageBlockList[index].isSelected = false;
                         selectedBlock = null;
                         DrawGame();
-                        if (isFinished()) {
+                      /*  if (isFinished()) {
                             OnFinished();
-                        }
+                        }*/
                 }else{
                     selectedBlock.x = e.pageX  - 25;
                     selectedBlock.y = e.pageY  - 25;
