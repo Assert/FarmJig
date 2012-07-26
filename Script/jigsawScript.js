@@ -1,36 +1,29 @@
-﻿
-function imageBlock(no, x, y) {
-
+﻿function imageBlock(no, x, y) {
     this.no = no;
     this.x = x;
     this.y = y;
     this.isSelected = false;
 }
 
-
 function jigsaw(canvasID, imageID, rows,columns) {
+    var MODE = "EASY"; //HARD
 
-    var MAIN_IMG_WIDTH = 800;
-    var MAIN_IMG_HEIGHT = 600;
-
+    var MAIN_IMG_WIDTH = 790; // 800
+    var MAIN_IMG_HEIGHT = 590; // 600
 
     var BLOCK_IMG_WIDTH = 600;
     var BLOCK_IMG_HEIGHT = 450;
 
-
-    var TOTAL_ROWS = 4; //rows;// 4;
-    var TOTAL_COLUMNS = 4; //columns;  //4;
+    var TOTAL_ROWS = 2; //rows;// 4;
+    var TOTAL_COLUMNS = 3; //columns;  //4;
 
     var TOTAL_PIECES = TOTAL_ROWS * TOTAL_COLUMNS;
 
     var IMG_WIDTH = Math.round(MAIN_IMG_WIDTH / TOTAL_COLUMNS);
     var IMG_HEIGHT = Math.round(MAIN_IMG_HEIGHT / TOTAL_ROWS);
 
-
     var BLOCK_WIDTH = 0; // Math.round(BLOCK_IMG_WIDTH / TOTAL_COLUMNS);
     var BLOCK_HEIGHT = 0; // Math.round(BLOCK_IMG_HEIGHT / TOTAL_ROWS);
-
-
 
     var image1;
     var canvas;
@@ -43,15 +36,11 @@ function jigsaw(canvasID, imageID, rows,columns) {
     this.left = 0;
 
     this.imageBlockList = new Array();
-
-
     this.blockList = new Array();
 
     this.selectedBlock = null;
 
-
     this.mySelf = this;
-
 
     this.initDrawing = function () {
         mySelf = this;
@@ -67,36 +56,27 @@ function jigsaw(canvasID, imageID, rows,columns) {
         canvas.onmouseout = handleOnMouseOut;
         canvas.onmousemove = handleOnMouseMove;
 
-
-        //  
-
         canvas.addEventListener("touchstart", handleOnMouseDown, false);
         canvas.addEventListener("touchend", handleOnMouseUp, false);
         canvas.addEventListener("touchmove", handleOnMouseMove, false);
 
-
         image1 = document.getElementById(imageID);
-
 
         initializeNewGame();
     };
     
-    
-    
     function initializeNewGame() {
-
         // Set block 
         BLOCK_WIDTH = Math.round(BLOCK_IMG_WIDTH / TOTAL_COLUMNS);
         BLOCK_HEIGHT = Math.round(BLOCK_IMG_HEIGHT / TOTAL_ROWS);
-
 
         // Draw image
         SetImageBlock();
         DrawGame();
     }
 
+    // Redraw game
     function DrawGame() {
-
         clear(ctx);
         drawLines();
         drawAllImages();
@@ -148,18 +128,12 @@ function jigsaw(canvasID, imageID, rows,columns) {
        
         //       ctx.save();
 
-/*
-// Draw preview image
-var eee = image1;
 
-canJigsaw.style.filter       = "alpha(opacity=25);";
-canJigsaw.style.MozOpacity   = 0.25;
-canJigsaw.style.opacity      = 0.25;
-canJigsaw.style.KhtmlOpacity = 0.25;
-
+        // Draw preview image
+        var eee = document.getElementById("img2");
 
         ctx.drawImage(eee, 0, 0, MAIN_IMG_WIDTH, MAIN_IMG_HEIGHT, 0, 0, BLOCK_IMG_WIDTH, BLOCK_IMG_HEIGHT);
-*/
+
        
 //       ctx.strokeStyle = "#e9e9e9";
        ctx.strokeStyle = "#000000";
@@ -183,17 +157,7 @@ canJigsaw.style.KhtmlOpacity = 0.25;
 
         ctx.closePath();
         ctx.stroke();
-
-
-
-
-
-
-
     }
-
-
-
 
     function drawAllImages() {
 
@@ -249,7 +213,6 @@ canJigsaw.style.KhtmlOpacity = 0.25;
     }
 
     this.ClearGame = function () {
-        //   alert("f");
         remove_width -= 30;
         remove_height -= 20;
 
@@ -278,6 +241,7 @@ canJigsaw.style.KhtmlOpacity = 0.25;
         }
     };
 
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////// EVENTS
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -305,13 +269,9 @@ canJigsaw.style.KhtmlOpacity = 0.25;
         }
     }
 
-var MODE = "EASY"; //HARD
 
     function handleOnMouseUp(e) {
-        
-        
         //In hard mode blocks will snapp to any slot, in easy they will not
-        
         if (selectedBlock) {
             var index = selectedBlock.no;
             if(MODE=="HARD"){
@@ -342,48 +302,36 @@ var MODE = "EASY"; //HARD
     function handleOnMouseMove(e) {
         e.preventDefault();//Stops the default behavior
         if (selectedBlock) {
-// Position of middle of selected block
-// Position of pointer might be best, but not sure touch can do that
+            // Position of middle of selected block
+            // Position of pointer might be best, but not sure touch can do that
             var xx = selectedBlock.x + (BLOCK_WIDTH / 2);
             var yy = selectedBlock.y + (BLOCK_HEIGHT /2);
 
            var index = selectedBlock.no;
 
-
             var block = GetImageBlock(blockList, xx, yy);
 
             if(block){
              //   console.log("Over" + block.no);
-
                 if(index==block.no && MODE!="HARD"){
-                    
-//                    console.log("YES");
-                    
                     imageBlockList[index].x = block.x;
                     imageBlockList[index].y = block.y;
-                    
+
                       imageBlockList[index].isSelected = false;
                         selectedBlock = null;
                         DrawGame();
-                      /*  if (isFinished()) {
-                            OnFinished();
-                        }*/
                 }else{
                     selectedBlock.x = e.pageX  - 25;
                     selectedBlock.y = e.pageY  - 25;
 
                     DrawGame();         
                 }
-            
             }else{
                 selectedBlock.x = e.pageX  - 25;
                 selectedBlock.y = e.pageY  - 25;
 
                 DrawGame();                
             }
-           
-
-
         }
     }
 
@@ -440,8 +388,6 @@ var MODE = "EASY"; //HARD
         return null;
     }
 
-
-
     function isFinished() {
         var total = TOTAL_PIECES;
         for (var i = 0; i < total; i++) {
@@ -457,5 +403,3 @@ var MODE = "EASY"; //HARD
     }
 
 }
-
-
