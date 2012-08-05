@@ -1,44 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- the line below is required for access to the appMobi JS library -->
-<script type="text/javascript" charset="utf-8" src="http://localhost:58888/_appMobi/appmobi.js"></script>
-
-<script type="text/javascript" language="javascript">
-        // This event handler is fired once the AppMobi libraries are ready
-        function onDeviceReady() {
-            //use AppMobi viewport to handle device resolution differences if you want
-            //AppMobi.display.useViewport(768,1024);
-
-            //hide splash screen now that our app is ready to run
-            AppMobi.device.hideSplashScreen();
-        }
-
-        //initial event handler to detect when appMobi is ready to roll
-        document.addEventListener("appMobi.device.ready",onDeviceReady,false);
-        
-//lock orientation
-        AppMobi.device.setRotateOrientation("portrait");
-        AppMobi.device.setAutoRotate(false);        
-        
-</script> 
-
-
-    <style type="text/css">
-    body{
-        margin: 0 0 0 0;
-        padding: 0 0 0 0;
-        background-color: Black;
-    }
+    <link href="Style/main.css" rel="stylesheet" type="text/css">    
+    <script type="text/javascript" charset="utf-8" src="http://localhost:58888/_appMobi/appmobi.js"></script>
+    <script type="text/javascript" language="javascript">
+            // This event handler is fired once the AppMobi libraries are ready
+            function onDeviceReady() {
+                //use AppMobi viewport to handle device resolution differences if you want
+                //AppMobi.display.useViewport(768,1024);
     
-    </style>
+                //hide splash screen now that our app is ready to run
+                AppMobi.device.hideSplashScreen();
+            }
     
+            //initial event handler to detect when appMobi is ready to roll
+            document.addEventListener("appMobi.device.ready",onDeviceReady,false);
+            
+    //lock orientation
+            AppMobi.device.setRotateOrientation("portrait");
+            AppMobi.device.setAutoRotate(false);                    
+    </script> 
 </head>
-<body style="background-image:url(Images/Landscape.png); background-repeat:no-repeat; background-position:left top">
-   
- <a href="Pig.html"><img src="Images/Pig.png" width="300" style="position:absolute; top:400px; left:10px;" /></a>
- <a href="Sheep.html"><img src="Images/TottSheep.png" width="300" style="position:absolute; top:420px; left:300px;" /></a>
- <a href="Chicken.html"><img src="Images/Chicken.png" width="300" style="position:absolute; top:420px; left:600px;" /></a>
-
+<body id="index">   
+    <a href="Pig.html"><img src="Images/Pig.png" width="300" style="position:absolute; top:400px; left:10px;" /></a>
+    <a href="Sheep.html"><img src="Images/Sheep.png" width="300" style="position:absolute; top:420px; left:300px;" /></a>
+    <a href="Chicken.html"><img src="Images/Chicken.png" width="300" style="position:absolute; top:420px; left:600px;" /></a>
 </body>
 </html>
