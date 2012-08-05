@@ -1,39 +1,54 @@
-﻿function imageBlock(no, x, y) {
-    this.no = no;
-    this.x = x;
-    this.y = y;
-    this.isSelected = false;
-}
+﻿
+/*
+ Create a own object with all the member variables in it
+ Then the mothods can be generic
+ 
+ Set config somewhere else
+ 
+*/
 
-function jigsaw(canvasID, imageID, rows,columns) {
+
+function jigsaw(canvasID, image1, rows,columns) {
     var MODE = "EASY"; //HARD
 
-    var MAIN_IMG_WIDTH = 790; // 800
-    var MAIN_IMG_HEIGHT = 590; // 600
+    // Org size of image
+    var ORG_PUZZLE_WIDTH = image1.naturalWidth -1;
+    var ORG_PUZZLE_HEIGHT = image1.naturalHeight -1;
 
-    var BLOCK_IMG_WIDTH = 600;
-    var BLOCK_IMG_HEIGHT = 450;
 
-    var TOTAL_ROWS = 2; //rows;// 4;
-    var TOTAL_COLUMNS = 3; //columns;  //4;
-
+    // Zoom image to
+    var SHOW_PUZZLE_WIDTH = 600;
+    var SHOW_PUZZLE_HEIGHT = 450;
+    
+    // Grid to
+    var TOTAL_ROWS = rows;
+    var TOTAL_COLUMNS = columns; 
     var TOTAL_PIECES = TOTAL_ROWS * TOTAL_COLUMNS;
 
-    var IMG_WIDTH = Math.round(MAIN_IMG_WIDTH / TOTAL_COLUMNS);
-    var IMG_HEIGHT = Math.round(MAIN_IMG_HEIGHT / TOTAL_ROWS);
+    // Size of the pieces
+    var PIECES_WIDTH = Math.round(ORG_PUZZLE_WIDTH / TOTAL_COLUMNS);
+    var PIECES_HEIGHT = Math.round(ORG_PUZZLE_HEIGHT / TOTAL_ROWS);
 
-    var BLOCK_WIDTH = 0; // Math.round(BLOCK_IMG_WIDTH / TOTAL_COLUMNS);
-    var BLOCK_HEIGHT = 0; // Math.round(BLOCK_IMG_HEIGHT / TOTAL_ROWS);
+    var BLOCK_WIDTH = 0; // Math.round(SHOW_PUZZLE_WIDTH / TOTAL_COLUMNS);
+    var BLOCK_HEIGHT = 0; // Math.round(SHOW_PUZZLE_HEIGHT / TOTAL_ROWS);
+    
+    // Selected piece offset from mouse point
+    var offsetX = 0;
+    var offsetY = 0;
 
-    var image1;
+    // Set jugsaw to middle
+    var PUZZLE_PADDING_TOP = 150;
+    var PUZZLE_PADDING_LEFT = 200;
+
+  //  var image1;
     var canvas;
     var ctx;
 
     this.canvasID = canvasID;
-    this.imageID = imageID;
+   // this.imageID = imageID;
 
-    this.top = 0;
-    this.left = 0;
+    this.top = PUZZLE_PADDING_TOP;
+    this.left = PUZZLE_PADDING_LEFT;
 
     this.imageBlockList = new Array();
     this.blockList = new Array();
@@ -50,31 +65,53 @@ function jigsaw(canvasID, imageID, rows,columns) {
         ctx = canvas.getContext('2d');
 
         // register events
-        //canvas.ondblclick = handleOnMouseDbClick;
         canvas.onmousedown = handleOnMouseDown;
         canvas.onmouseup = handleOnMouseUp;
-        canvas.onmouseout = handleOnMouseOut;
         canvas.onmousemove = handleOnMouseMove;
-
+        
         canvas.addEventListener("touchstart", handleOnMouseDown, false);
         canvas.addEventListener("touchend", handleOnMouseUp, false);
         canvas.addEventListener("touchmove", handleOnMouseMove, false);
-
-        image1 = document.getElementById(imageID);
+   
+       // image1 = document.getElementById(imageID);
 
         initializeNewGame();
     };
     
     function initializeNewGame() {
         // Set block 
-        BLOCK_WIDTH = Math.round(BLOCK_IMG_WIDTH / TOTAL_COLUMNS);
-        BLOCK_HEIGHT = Math.round(BLOCK_IMG_HEIGHT / TOTAL_ROWS);
+        BLOCK_WIDTH = Math.round(SHOW_PUZZLE_WIDTH / TOTAL_COLUMNS);
+        BLOCK_HEIGHT = Math.round(SHOW_PUZZLE_HEIGHT / TOTAL_ROWS);
 
         // Draw image
         SetImageBlock();
         DrawGame();
     }
 
+    //Tegner brikkene før spillet
+    function SetImageBlock() {
+
+        var total = TOTAL_PIECES;
+        imageBlockList = new Array();
+        blockList = new Array();
+
+        var x1 = SHOW_PUZZLE_WIDTH + 20;
+        var x2 = canvas.width - 50;
+        var y2 = SHOW_PUZZLE_HEIGHT;
+ 
+        for (var i = 0; i < total; i++) {       
+            var imgBlock = eee(i);
+            imageBlockList.push(imgBlock);
+
+            var x = PUZZLE_PADDING_LEFT + (i % TOTAL_COLUMNS) * BLOCK_WIDTH;
+            var y = PUZZLE_PADDING_TOP + Math.floor(i / TOTAL_COLUMNS) * BLOCK_HEIGHT;
+
+            var block = new puzzleBlock(i, x, y);
+            blockList.push(block);
+
+        }
+
+    }
     // Redraw game
     function DrawGame() {
         clear(ctx);
@@ -86,73 +123,33 @@ function jigsaw(canvasID, imageID, rows,columns) {
         }
     }
 
-
-    //Tegner brikkene før spillet
-    function SetImageBlock() {
-
-        var total = TOTAL_PIECES;
-        imageBlockList = new Array();
-        blockList = new Array();
-
-        var x1 = BLOCK_IMG_WIDTH + 20;
-        var x2 = canvas.width - 50;
-        var y2 = BLOCK_IMG_HEIGHT;
-  /*      
-                  var randomX = 610;
-            var randomY = 300;//460;
-  */
-        
-        
-        
-        for (var i = 0; i < total; i++) {
-
-            var randomX = randomXtoY(x1, x2, 2);
-            var randomY = randomXtoY(0, y2, 2);
-       
-            var imgBlock = new imageBlock(i, randomX, randomY);
-            imageBlockList.push(imgBlock);
-
-            var x = (i % TOTAL_COLUMNS) * BLOCK_WIDTH;
-            var y = Math.floor(i / TOTAL_COLUMNS) * BLOCK_HEIGHT;
-
-            var block = new imageBlock(i, x, y);
-            blockList.push(block);
-
-        }
-
-    }
-
-
-
     function drawLines() {
-       
-        //       ctx.save();
+        // Draw background image
+        var background_image = document.getElementById("img3");
+        ctx.drawImage(background_image, 0, 0);
 
 
         // Draw preview image
-        var eee = document.getElementById("img2");
-
-        ctx.drawImage(eee, 0, 0, MAIN_IMG_WIDTH, MAIN_IMG_HEIGHT, 0, 0, BLOCK_IMG_WIDTH, BLOCK_IMG_HEIGHT);
-
+        var shadow_image = document.getElementById("img2");
+        // context.drawImage(img,sx,sy,swidth,sheight,dx,dy,dwidth,dheight);
+        ctx.drawImage(shadow_image, 0, 0, ORG_PUZZLE_WIDTH, ORG_PUZZLE_HEIGHT, PUZZLE_PADDING_LEFT, PUZZLE_PADDING_TOP, SHOW_PUZZLE_WIDTH, SHOW_PUZZLE_HEIGHT);
        
-//       ctx.strokeStyle = "#e9e9e9";
-       ctx.strokeStyle = "#000000";
-        
+       ctx.strokeStyle = "#000000"; 
         ctx.lineWidth = 1;
         ctx.beginPath();
         
         // draw verticle lines
         for (var i = 0; i <= TOTAL_COLUMNS; i++) {
-            var x = BLOCK_WIDTH * i;
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, 450);
+            var x = PUZZLE_PADDING_LEFT + (BLOCK_WIDTH * i);
+            ctx.moveTo(x, PUZZLE_PADDING_TOP);
+            ctx.lineTo(x, 450+PUZZLE_PADDING_TOP);
         }
 
         // draw horizontal lines
         for (var i = 0; i <= TOTAL_ROWS; i++) {
-            var y = BLOCK_HEIGHT * i;
-            ctx.moveTo(0, y);
-            ctx.lineTo(600, y);
+            var y = PUZZLE_PADDING_TOP + (BLOCK_HEIGHT * i);
+            ctx.moveTo(PUZZLE_PADDING_LEFT, y);
+            ctx.lineTo(600+PUZZLE_PADDING_LEFT, y);
         }
 
         ctx.closePath();
@@ -160,39 +157,29 @@ function jigsaw(canvasID, imageID, rows,columns) {
     }
 
     function drawAllImages() {
-
         for (var i = 0; i < imageBlockList.length; i++) {
             var imgBlock = imageBlockList[i];
             if (imgBlock.isSelected == false) {
-
                 drawImageBlock(imgBlock);
             }
         }
     }
 
     function drawImageBlock(imgBlock) {
-        
         drawFinalImage(imgBlock.no, imgBlock.x, imgBlock.y, BLOCK_WIDTH, BLOCK_HEIGHT);
     }
 
     function drawFinalImage(index, destX, destY, destWidth, destHeight) {
-
         ctx.save();
-
-        var srcX = (index % TOTAL_COLUMNS) * IMG_WIDTH;
-        var srcY = Math.floor(index / TOTAL_COLUMNS) * IMG_HEIGHT;
-
-        ctx.drawImage(image1, srcX, srcY, IMG_WIDTH, IMG_HEIGHT, destX, destY, destWidth, destHeight);
-
+        var srcX = (index % TOTAL_COLUMNS) * PIECES_WIDTH;
+        var srcY = Math.floor(index / TOTAL_COLUMNS) * PIECES_HEIGHT;
+        ctx.drawImage(image1, srcX, srcY, PIECES_WIDTH, PIECES_HEIGHT, destX, destY, destWidth, destHeight);
         ctx.restore();
     }
 
     function drawImage(image) {
-
         ctx.save();
-
         ctx.drawImage(image, 0, 0, BLOCK_WIDTH, BLOCK_WIDTH, 10, 10, BLOCK_WIDTH, BLOCK_WIDTH);
-
         ctx.restore();
     }
 
@@ -246,26 +233,17 @@ function jigsaw(canvasID, imageID, rows,columns) {
     ///////////////////////////////////////// EVENTS
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    function handleOnMouseOut(e) {
-        // remove old selected
-        if (selectedBlock != null) {
-            imageBlockList[selectedBlock.no].isSelected = false;
-            selectedBlock = null;
-            DrawGame();
-        }
-    }
-
     function handleOnMouseDown(e) {
         e.preventDefault();//Stops the default behavior
         // remove old selected
         if (selectedBlock != null) {
             imageBlockList[selectedBlock.no].isSelected = false;
         }
-        selectedBlock = GetImageBlock(imageBlockList, e.pageX, e.pageY);
+        selectedBlock = GetPuzzlePiece(imageBlockList, e.pageX, e.pageY);
         if (selectedBlock) {
             imageBlockList[selectedBlock.no].isSelected = true;
-                       //     console.log("Selected " + selectedBlock.no);
-
+                  offsetX = e.pageX - selectedBlock.x;
+                  offsetY = e.pageY - selectedBlock.y;
         }
     }
 
@@ -274,8 +252,10 @@ function jigsaw(canvasID, imageID, rows,columns) {
         //In hard mode blocks will snapp to any slot, in easy they will not
         if (selectedBlock) {
             var index = selectedBlock.no;
+      
             if(MODE=="HARD"){
-                var block = GetImageBlock(blockList, selectedBlock.x, selectedBlock.y);
+                //Trenger jeg dette i HARD MODE?
+                var block = GetPuzzlePiece(blockList, selectedBlock.x, selectedBlock.y);
                 if (block) {
                     var blockOldImage = GetImageBlockOnEqual(imageBlockList, block.x, block.y);
                     if (blockOldImage == null) {
@@ -287,7 +267,11 @@ function jigsaw(canvasID, imageID, rows,columns) {
                     imageBlockList[index].x = selectedBlock.x;
                     imageBlockList[index].y = selectedBlock.y;
                 }
+            }else{
+                imageBlockList[index].x = selectedBlock.x;
+                imageBlockList[index].y = selectedBlock.y;        
             }
+        
             imageBlockList[index].isSelected = false;
             selectedBlock = null;
             DrawGame();
@@ -295,24 +279,15 @@ function jigsaw(canvasID, imageID, rows,columns) {
             if (isFinished()) {
                 OnFinished();
             }
-
         }
     }
 
     function handleOnMouseMove(e) {
         e.preventDefault();//Stops the default behavior
         if (selectedBlock) {
-            // Position of middle of selected block
-            // Position of pointer might be best, but not sure touch can do that
-            var xx = selectedBlock.x + (BLOCK_WIDTH / 2);
-            var yy = selectedBlock.y + (BLOCK_HEIGHT /2);
-
            var index = selectedBlock.no;
-
-            var block = GetImageBlock(blockList, xx, yy);
-
+            var block = GetPuzzlePiece(blockList, e.pageX, e.pageY);
             if(block){
-             //   console.log("Over" + block.no);
                 if(index==block.no && MODE!="HARD"){
                     imageBlockList[index].x = block.x;
                     imageBlockList[index].y = block.y;
@@ -320,15 +295,19 @@ function jigsaw(canvasID, imageID, rows,columns) {
                       imageBlockList[index].isSelected = false;
                         selectedBlock = null;
                         DrawGame();
+                         if (isFinished()) {
+                             OnFinished();
+                       }
                 }else{
-                    selectedBlock.x = e.pageX  - 25;
-                    selectedBlock.y = e.pageY  - 25;
-
+                    //Move
+                    selectedBlock.x = e.pageX  - offsetX;
+                    selectedBlock.y = e.pageY  - offsetY;
                     DrawGame();         
                 }
             }else{
-                selectedBlock.x = e.pageX  - 25;
-                selectedBlock.y = e.pageY  - 25;
+                //Move
+                selectedBlock.x = e.pageX  - offsetX;
+                selectedBlock.y = e.pageY  - offsetY;
 
                 DrawGame();                
             }
@@ -343,17 +322,50 @@ function jigsaw(canvasID, imageID, rows,columns) {
         c.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    function randomXtoY(minVal, maxVal, floatVal) {
-        var randVal = minVal + (Math.random() * (maxVal - minVal));
-        var val = typeof floatVal == 'undefined' ? Math.round(randVal) : randVal.toFixed(floatVal);
 
-        return Math.round(val);
+// 2(a+2) + 2b = 2a + 2b +4 = c
+
+/*       axb=c
+        rad x col ramme ytterramme brikker
+         2x2 4  12 4
+         2x3 6  14 6
+         2x4 8  16 8
+         3x2 6  14 6
+         3x3 8  16 9
+         3x4 10 18 12
+         3x5 12 20 15
+         4x2 8  16 8
+         4x3 10 18 12
+         4x4 12 20 16
+         4x5 14 22 20
+         5x3 12 20 15
+         5x4 14 22 20
+         5x5 16 24 25
+        
+*/
+    
+    function eee(index) {
+            var randValX = (Math.random() * 1024);
+            randValX = Math.round(randValX);
+    
+            var randValY = (Math.random() * PUZZLE_PADDING_TOP);
+            randValY = Math.round(randValY);
+
+             if (yesNo()){
+               //  randValY += SHOW_PUZZLE_HEIGHT + (PUZZLE_PADDING_TOP/2);
+                randValY=10;
+            }else{
+                randValY=610;
+            }
+        var imgBlock = new puzzleBlock(index, randValX, randValY);
+        return imgBlock;
     }
 
-    function GetImageBlock(list, x, y) {
-        
-       // console.log("x"+x+" y"+y);
-        
+
+
+
+
+    function GetPuzzlePiece(list, x, y) {        
         for (var i = list.length - 1; i >= 0; i--) {
             var imgBlock = list[i];
 
@@ -364,9 +376,7 @@ function jigsaw(canvasID, imageID, rows,columns) {
             var y2 = y1 + BLOCK_HEIGHT;
 
             if ((x >= x1 && x <= x2) && (y >= y1 && y <= y2)) {
-              //  alert("found: " + imgBlock.no);
-                var img = new imageBlock(imgBlock.no, imgBlock.x, imgBlock.y);
-                //drawImageBlock(img);
+                var img = new puzzleBlock(imgBlock.no, imgBlock.x, imgBlock.y);
                 return img;
             }
         }
@@ -380,8 +390,7 @@ function jigsaw(canvasID, imageID, rows,columns) {
             var x1 = imgBlock.x;
             var y1 = imgBlock.y;
             if ((x == x1) && (y == y1)) {
-                var img = new imageBlock(imgBlock.no, imgBlock.x, imgBlock.y);
-                //drawImageBlock(img);
+                var img = new puzzleBlock(imgBlock.no, imgBlock.x, imgBlock.y);
                 return img;
             }
         }

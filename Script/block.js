@@ -1,0 +1,1 @@
+function puzzleBlock(no, x, y) {    this.no = no;    this.x = x;    this.y = y;    this.isSelected = false;}
