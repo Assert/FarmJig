@@ -2,23 +2,12 @@
 <html>
 <head>
     <link href="Style/main.css" rel="stylesheet" type="text/css">    
-    <script type="text/javascript" charset="utf-8" src="http://localhost:58888/_appMobi/appmobi.js"></script>
+	<script src="intelxdk.js"></script>
     <script type="text/javascript" language="javascript">
-            // This event handler is fired once the AppMobi libraries are ready
-            function onDeviceReady() {
-                //use AppMobi viewport to handle device resolution differences if you want
-                //AppMobi.display.useViewport(768,1024);
-    
-                //hide splash screen now that our app is ready to run
-                AppMobi.device.hideSplashScreen();
-            }
-    
-            //initial event handler to detect when appMobi is ready to roll
-            document.addEventListener("appMobi.device.ready",onDeviceReady,false);
             
-    //lock orientation
-            AppMobi.device.setRotateOrientation("portrait");
-            AppMobi.device.setAutoRotate(false);                    
+        //lock in "portrait" orientation 
+        intel.xdk.device.setRotateOrientation("landscape");
+        
     </script> 
 </head>
 <body id="index">   
@@ -26,9 +15,5 @@
     <a href="Sheep.html"><img src="Images/Sheep.png" width="300" style="position:absolute; top:420px; left:300px;" /></a>
     <a href="Chicken.html"><img src="Images/Chicken.png" width="300" style="position:absolute; top:420px; left:500px;" /></a>
     <a href="Bunny.html"><img src="Images/Bunny.png" width="300" style="position:absolute; top:420px; left:700px;" /></a>
-
-
-
-    <!-- La til en kanin..    men tror   appmobi herennyereversjon    -->
 </body>
 </html>
