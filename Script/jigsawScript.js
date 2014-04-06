@@ -8,7 +8,31 @@
 */
 
 
-function jigsaw(canvasID, image1, rows,columns) {
+function jigsaw(canvasID, animale, rows,columns) {
+    
+    
+    var image1;
+    var background_image = document.getElementById("img3");
+    var shadow_image;
+    
+ 
+            if(animale=="pig"){
+                image1 = document.getElementById("pig");
+                shadow_image = document.getElementById("pigShadow");
+            }else if(animale=="sheep"){
+                image1 = document.getElementById("sheep");
+                shadow_image = document.getElementById("sheepShadow");
+            }else if(animale=="chicken"){
+                image1 = document.getElementById("chicken");
+                shadow_image = document.getElementById("chickenShadow");
+            }else if(animale=="bunny"){
+                image1 = document.getElementById("bunny");
+                shadow_image = document.getElementById("bunnyShadow");
+            }else{
+                alert("Error in animal string");            
+            }
+    
+    
     var MODE = "EASY"; //HARD
 
     // Org size of image
@@ -125,12 +149,12 @@ function jigsaw(canvasID, image1, rows,columns) {
 
     function drawLines() {
         // Draw background image
-        var background_image = document.getElementById("img3");
+       // var background_image = document.getElementById("img3");
         ctx.drawImage(background_image, 0, 0);
 
 
         // Draw preview image
-        var shadow_image = document.getElementById("img2");
+        //var shadow_image = document.getElementById("img2");
         // context.drawImage(img,sx,sy,swidth,sheight,dx,dy,dwidth,dheight);
         ctx.drawImage(shadow_image, 0, 0, ORG_PUZZLE_WIDTH, ORG_PUZZLE_HEIGHT, PUZZLE_PADDING_LEFT, PUZZLE_PADDING_TOP, SHOW_PUZZLE_WIDTH, SHOW_PUZZLE_HEIGHT);
        
