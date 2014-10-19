@@ -1,7 +1,7 @@
 ﻿
 /*
  Create a own object with all the member variables in it
- Then the mothods can be generic
+ Then the methods can be generic
  
  Set config somewhere else
  
@@ -22,14 +22,14 @@ function jigsaw(canvasID, animale, rows,columns) {
             }else if(animale=="sheep"){
                 image1 = document.getElementById("sheep");
                 shadow_image = document.getElementById("sheepShadow");
-            }else if(animale=="chicken"){
-                image1 = document.getElementById("chicken");
-                shadow_image = document.getElementById("chickenShadow");
-            }else if(animale=="bunny"){
-                image1 = document.getElementById("bunny");
-                shadow_image = document.getElementById("bunnyShadow");
+            }else if(animale=="duck"){
+                image1 = document.getElementById("duck");
+                shadow_image = document.getElementById("duckShadow");
+            }else if(animale=="donkey"){
+                image1 = document.getElementById("donkey");
+                shadow_image = document.getElementById("donkeyShadow");
             }else{
-                alert("Error in animal string");            
+                alert("Dev-exception: Error in animal string (jigsawScript.js)");            
             }
     
     
