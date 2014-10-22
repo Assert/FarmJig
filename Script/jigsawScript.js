@@ -5,28 +5,25 @@ function jigsaw(canvasID, animal, rows, columns) {
 
     this.background_image = document.getElementById("backgrond");
 
-     if(animal=="pig"){
-            this.puzzlePicture = document.getElementById("pig");
-            this.puzzlePictureShadow = document.getElementById("pigShadow");
-        }else if(animal=="sheep"){
-            this.puzzlePicture = document.getElementById("sheep");
-            this.puzzlePictureShadow = document.getElementById("sheepShadow");
-        }else if(animal=="duck"){
-            this.puzzlePicture = document.getElementById("duck");
-            this.puzzlePictureShadow = document.getElementById("duckShadow");
-        }else if(animal=="donkey"){
-            this.puzzlePicture = document.getElementById("donkey");
-            this.puzzlePictureShadow = document.getElementById("donkeyShadow");
-        }else{
-            alert("Dev-exception: Error in animal string (jigsawScript.js)");            
-        }
-    
-    
+    if(animal=="pig"){
+        this.puzzlePicture = document.getElementById("pig");
+        this.puzzlePictureShadow = document.getElementById("pigShadow");
+    }else if(animal=="sheep"){
+        this.puzzlePicture = document.getElementById("sheep");
+        this.puzzlePictureShadow = document.getElementById("sheepShadow");
+    }else if(animal=="duck"){
+        this.puzzlePicture = document.getElementById("duck");
+        this.puzzlePictureShadow = document.getElementById("duckShadow");
+    }else if(animal=="donkey"){
+        this.puzzlePicture = document.getElementById("donkey");
+        this.puzzlePictureShadow = document.getElementById("donkeyShadow");
+    }else{
+        alert("Dev-exception: Error in animal string (jigsawScript.js)");            
+    }
 
     // Org size of image
     this.ORG_PUZZLE_WIDTH = this.puzzlePicture.naturalWidth -1;
     this.ORG_PUZZLE_HEIGHT = this.puzzlePicture.naturalHeight -1;
-
 
     // Zoom image to
     this.SHOW_PUZZLE_WIDTH = 600;
@@ -41,8 +38,8 @@ function jigsaw(canvasID, animal, rows, columns) {
     this.PIECES_WIDTH = Math.round(this.ORG_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
     this.PIECES_HEIGHT = Math.round(this.ORG_PUZZLE_HEIGHT / this.TOTAL_ROWS);
 
-    this.BLOCK_WIDTH = 0; // Math.round(this.SHOW_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
-    this.BLOCK_HEIGHT = 0; // Math.round(this.SHOW_PUZZLE_HEIGHT / this.TOTAL_ROWS);
+    this.BLOCK_WIDTH = Math.round(this.SHOW_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
+    this.BLOCK_HEIGHT = Math.round(this.SHOW_PUZZLE_HEIGHT / this.TOTAL_ROWS);
     
     // Selected piece offset from mouse point
     this.offsetX = 0;
@@ -60,13 +57,13 @@ function jigsaw(canvasID, animal, rows, columns) {
     var imageBlockList = []; // Dette er brikker (index, x,y og isSelected)
     var blockList = [];  // Dette er slots
     var selectedBlock = null;
+    
+    this.canvas = document.getElementById(this.canvasID);
+    this.ctx = this.canvas.getContext('2d');
+
     var mySelf;
     this.initDrawing = function () {
         mySelf = this;
-
-        this.canvas = document.getElementById(this.canvasID);
-
-        this.ctx = this.canvas.getContext('2d');
 
         // register events
         this.canvas.onmousedown = this.handleOnMouseDown;
@@ -81,10 +78,6 @@ function jigsaw(canvasID, animal, rows, columns) {
     };
     
     this.initializeNewGame = function() {
-        // Set block 
-        this.BLOCK_WIDTH = Math.round(this.SHOW_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
-        this.BLOCK_HEIGHT = Math.round(this.SHOW_PUZZLE_HEIGHT / this.TOTAL_ROWS);
-
         this.devideBoardIntoPieces();
         this.redrawGame();
     };
@@ -165,14 +158,7 @@ function jigsaw(canvasID, animal, rows, columns) {
         this.ctx.drawImage(this.puzzlePicture, srcX, srcY, this.PIECES_WIDTH, this.PIECES_HEIGHT, destX, destY, destWidth, destHeight);
         this.ctx.restore();
     };
-/*
-    function drawImage(image) {
-        alert("hjkhj");
-        this.ctx.save();
-        this.ctx.drawImage(image, 0, 0, this.BLOCK_WIDTH, this.BLOCK_WIDTH, 10, 10, this.BLOCK_WIDTH, this.BLOCK_WIDTH);
-        this.ctx.restore();
-    }
-*/
+
     var interval = null;
     var remove_width;
     var remove_height;
@@ -211,8 +197,6 @@ function jigsaw(canvasID, animal, rows, columns) {
            
             // Restart game
             this.initializeNewGame(); 
-          //  alert("Congrats....");
-
         }
     };
 
@@ -224,8 +208,6 @@ function jigsaw(canvasID, animal, rows, columns) {
     this.handleOnMouseDown = function(e) {
         e.preventDefault();//Stops the default behavior
         // remove old selected
-        
-
         if (selectedBlock !== null) {
             imageBlockList[selectedBlock.no].isSelected = false;
         }
@@ -239,9 +221,7 @@ function jigsaw(canvasID, animal, rows, columns) {
         }
     };
 
-
-    this.handleOnMouseUp = function(e) {
-        
+    this.handleOnMouseUp = function(e) {  
         //In hard mode blocks will snapp to any slot, in easy they will not
         if (selectedBlock) {
             var index = selectedBlock.no;
@@ -278,7 +258,6 @@ function jigsaw(canvasID, animal, rows, columns) {
     this.handleOnMouseMove = function(e) {
 
         // Denne fyrer hele tiden..
-        
         
         e.preventDefault();//Stops the default behavior
         if (selectedBlock) {
