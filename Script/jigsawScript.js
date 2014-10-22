@@ -1,32 +1,20 @@
-/*
-Alle functions på formen:  this.someName = function () {
-slik at de ikke er i: global namespece
-Alle memberst slik: this.name = 
-Ref metoder med this.
-De metoder som ikke hører til klassen skal ut
 
-*/
-
-
-function jigsaw(canvasID, animale, rows,columns) {
+function jigsaw(canvasID, animal, rows, columns) {
     
     this.MODE = "EASY"; //HARD
 
-    
     this.background_image = document.getElementById("backgrond");
 
-    this.puzzlePicture = "";
-    this.puzzlePictureShadow = "";
-     if(animale=="pig"){
+     if(animal=="pig"){
             this.puzzlePicture = document.getElementById("pig");
             this.puzzlePictureShadow = document.getElementById("pigShadow");
-        }else if(animale=="sheep"){
+        }else if(animal=="sheep"){
             this.puzzlePicture = document.getElementById("sheep");
             this.puzzlePictureShadow = document.getElementById("sheepShadow");
-        }else if(animale=="duck"){
+        }else if(animal=="duck"){
             this.puzzlePicture = document.getElementById("duck");
             this.puzzlePictureShadow = document.getElementById("duckShadow");
-        }else if(animale=="donkey"){
+        }else if(animal=="donkey"){
             this.puzzlePicture = document.getElementById("donkey");
             this.puzzlePictureShadow = document.getElementById("donkeyShadow");
         }else{
@@ -63,9 +51,6 @@ function jigsaw(canvasID, animale, rows,columns) {
     // Set jugsaw to middle
     this.PUZZLE_PADDING_TOP = 150;
     this.PUZZLE_PADDING_LEFT = 200;
-
-    this.canvas = null;
-    this.ctx = null;
 
     this.canvasID = canvasID;
 
@@ -312,14 +297,14 @@ function jigsaw(canvasID, animale, rows,columns) {
                        }
                 }else{
                     //Move
-                    selectedBlock.x = e.pageX  - this.offsetX;
-                    selectedBlock.y = e.pageY  - this.offsetY;
+                    selectedBlock.x = e.pageX - this.offsetX;
+                    selectedBlock.y = e.pageY - this.offsetY;
                     mySelf.redrawGame();         
                 }
             }else{
                 //Move
-                selectedBlock.x = e.pageX  - this.offsetX;
-                selectedBlock.y = e.pageY  - this.offsetY;
+                selectedBlock.x = e.pageX - this.offsetX;
+                selectedBlock.y = e.pageY - this.offsetY;
 
                 mySelf.redrawGame();                
             }
@@ -356,7 +341,6 @@ function jigsaw(canvasID, animale, rows,columns) {
         return new puzzleBlock(index, x, y);        
     };
     
-    
     this.FindSelectedPuzzlePiece = function(list, x, y) {        
         for (var i = list.length - 1; i >= 0; i--) {
             var imgBlock = list[i];
@@ -381,8 +365,7 @@ function jigsaw(canvasID, animale, rows,columns) {
             var x1 = imgBlock.x;
             var y1 = imgBlock.y;
             if ((x == x1) && (y == y1)) {
-                var img = new puzzleBlock(imgBlock.no, imgBlock.x, imgBlock.y);
-                return img;
+                return new puzzleBlock(imgBlock.no, imgBlock.x, imgBlock.y);
             }
         }
         return null;
