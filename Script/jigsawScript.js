@@ -12,9 +12,8 @@ function jigsaw(canvasID, animale, rows,columns) {
     
     
     var image1;
-    var background_image = document.getElementById("img3");
+    var background_image = document.getElementById("backgrond");
     var shadow_image;
-    
  
             if(animale=="pig"){
                 image1 = document.getElementById("pig");
@@ -74,8 +73,8 @@ function jigsaw(canvasID, animale, rows,columns) {
     this.top = PUZZLE_PADDING_TOP;
     this.left = PUZZLE_PADDING_LEFT;
 
-    this.imageBlockList = new Array();
-    this.blockList = new Array();
+    this.imageBlockList = [];
+    this.blockList = [];
 
     this.selectedBlock = null;
 
@@ -116,8 +115,8 @@ function jigsaw(canvasID, animale, rows,columns) {
     function SetImageBlock() {
 
         var total = TOTAL_PIECES;
-        imageBlockList = new Array();
-        blockList = new Array();
+        imageBlockList = [];
+        blockList = [];
 
         var x1 = SHOW_PUZZLE_WIDTH + 20;
         var x2 = canvas.width - 50;
@@ -170,7 +169,7 @@ function jigsaw(canvasID, animale, rows,columns) {
         }
 
         // draw horizontal lines
-        for (var i = 0; i <= TOTAL_ROWS; i++) {
+        for (i = 0; i <= TOTAL_ROWS; i++) {
             var y = PUZZLE_PADDING_TOP + (BLOCK_HEIGHT * i);
             ctx.moveTo(PUZZLE_PADDING_LEFT, y);
             ctx.lineTo(600+PUZZLE_PADDING_LEFT, y);
@@ -183,7 +182,7 @@ function jigsaw(canvasID, animale, rows,columns) {
     function drawAllImages() {
         for (var i = 0; i < imageBlockList.length; i++) {
             var imgBlock = imageBlockList[i];
-            if (imgBlock.isSelected == false) {
+            if (imgBlock.isSelected === false) {
                 drawImageBlock(imgBlock);
             }
         }
@@ -213,9 +212,9 @@ function jigsaw(canvasID, animale, rows,columns) {
     
     function OnFinished() {
 
-        var audioElement = document.createElement('audio');
-        audioElement.setAttribute('src', 'Audio/finish.mp3');
-        audioElement.play();
+       // var audioElement = document.createElement('audio');
+        //audioElement.setAttribute('src', 'Audio/finish.mp3');
+        //audioElement.play();
 
         remove_width = BLOCK_WIDTH;
         remove_height = BLOCK_HEIGHT;
@@ -260,7 +259,7 @@ function jigsaw(canvasID, animale, rows,columns) {
     function handleOnMouseDown(e) {
         e.preventDefault();//Stops the default behavior
         // remove old selected
-        if (selectedBlock != null) {
+        if (selectedBlock !== null) {
             imageBlockList[selectedBlock.no].isSelected = false;
         }
         selectedBlock = GetPuzzlePiece(imageBlockList, e.pageX, e.pageY);
@@ -282,7 +281,7 @@ function jigsaw(canvasID, animale, rows,columns) {
                 var block = GetPuzzlePiece(blockList, selectedBlock.x, selectedBlock.y);
                 if (block) {
                     var blockOldImage = GetImageBlockOnEqual(imageBlockList, block.x, block.y);
-                    if (blockOldImage == null) {
+                    if (blockOldImage === null) {
                         imageBlockList[index].x = block.x;
                         imageBlockList[index].y = block.y;
                     }
@@ -370,16 +369,19 @@ function jigsaw(canvasID, animale, rows,columns) {
     
     function eee(index) {
             var randValX = (Math.random() * 1024);
+           // if (randValX<BLOCK_WIDTH) randValX=BLOCK_WIDTH;
+            if (randValX>(1024-BLOCK_WIDTH)) randValX=1024-BLOCK_WIDTH;
+        
             randValX = Math.round(randValX);
     
-            var randValY = (Math.random() * PUZZLE_PADDING_TOP);
+            var randValY = (Math.random() * PUZZLE_PADDING_TOP) - BLOCK_HEIGHT;
             randValY = Math.round(randValY);
 
              if (yesNo()){
                //  randValY += SHOW_PUZZLE_HEIGHT + (PUZZLE_PADDING_TOP/2);
                 randValY=10;
             }else{
-                randValY=610;
+                randValY=730 - BLOCK_HEIGHT;
             }
         var imgBlock = new puzzleBlock(index, randValX, randValY);
         return imgBlock;

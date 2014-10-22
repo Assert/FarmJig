@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-     <link href="Style/main.css" rel="stylesheet" type="text/css">    
+    <link href="Style/main.css" rel="stylesheet" type="text/css">    
 	<script src="intelxdk.js"></script>
     <script type="text/javascript" src="Script/helper.js"></script>
     <script type="text/javascript" src="Script/block.js"></script>
     <script type="text/javascript" src="Script/jigsawScript.js"></script>
-    <script type="text/javascript" src="Script/appMobiStart.js"></script>
-	
-
 </head>
 <body id="index">   
-    <a href="index.html"><img src="Images/Arrow.png" id="backArrow" /></a>
+    <img src="Images/Arrow.png" id="backArrow" onclick="javascript:goBack()"/>
     
     <canvas id="canJigsaw" width="1024" height="768"></canvas>
     
-    <div id="www">
-    <img src="Images/Pig.png" width="300" style="position:absolute; top:430px; left:10px;" onclick="eee('pig')" />
-    <img src="Images/Sheep.png" width="300" style="position:absolute; top:420px; left:300px;" onclick="eee('sheep')" />
-    <img src="Images/Duck.png" width="100" style="position:absolute; top:420px; left:620px;" onclick="eee('duck')" />
-    <img src="Images/Donkey.png" width="300" style="position:absolute; top:420px; left:700px;" onclick="eee('donkey')" />
+    <div id="indexScreen">
+    <img src="Images/Pig.png" width="300" style="position:absolute; top:430px; left:10px;" onclick="SelectAnimal('pig')" />
+    <img src="Images/Sheep.png" width="300" style="position:absolute; top:420px; left:300px;" onclick="SelectAnimal('sheep')" />
+    <img src="Images/Duck.png" width="100" style="position:absolute; top:420px; left:620px;" onclick="SelectAnimal('duck')" />
+    <img src="Images/Donkey.png" width="300" style="position:absolute; top:420px; left:700px;" onclick="SelectAnimal('donkey')" />
     </div>
     
     <img id="sheep" width="1" height="1" src="Images/Sheep.png"></img>
@@ -28,34 +25,75 @@
     <img id="pigShadow" width="1" height="1" src="Images/PigShadow.png"></img>
     <img id="duck" width="1" height="1" src="Images/Duck.png"></img>
     <img id="duckShadow" width="1" height="1" src="Images/DuckShadow.png"></img>
-    <img id="dunkey" width="1" height="1" src="Images/Bunny.png"></img>
-    <img id="dunkeyShadow" width="1" height="1" src="Images/DunkeyShadow.png"></img>
+    <img id="donkey" width="1" height="1" src="Images/Donkey.png"></img>
+    <img id="donkeyShadow" width="1" height="1" src="Images/DonkeyShadow.png"></img>
     
-    <img id="img3" width="1" height="1" src="Images/Landscape.png"></img>
-    
+    <img id="backgrond" width="1" height="1" src="Images/Landscape.png"></img>
 </body>
 </html>
 
     <script type="text/javascript" language="javascript">
-        //lock in "portrait" orientation 
-        intel.xdk.device.setRotateOrientation("landscape");
+      //  init();
+        var game;
+        document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);               
+    
+        function onDeviceReady(){
+            init();
+        }  
         
-        document.getElementById("canJigsaw").style.display = 'none';
-        document.getElementById("www").style.display = 'block';
-        
-        
-          var background_image = document.getElementById("img3");
-              var canvas = document.getElementById("canJigsaw");
 
-         var ctx = canvas.getContext('2d');
-          ctx.drawImage(background_image, 0, 0);
-		  ctx.restore();
+        function init() {
+            intel.xdk.device.setRotateOrientation('landscape');
+
+            intel.xdk.device.hideSplashScreen();   
+            
+            drawBackground();
+
+            showIndexScreen();
+            
+
+        }
         
+        function SelectAnimal(animalName){
+            showGameScreen();
+            var totalRows = 2;
+            var totalColumns = 3;         
+            var canvasID = "canJigsaw";
+            
+            // ikke ta animal inn i contructor
+            // lag game obj ved init, og send inn
+            // startGame(animal)
+            // clerGame();
+            
+            game = new jigsaw(canvasID, animalName, totalRows, totalColumns);
+   
+            game.initDrawing(); 
+        }
         
-        function eee(animale){
-            document.getElementById("canJigsaw").style.display = 'block';
-            document.getElementById("www").style.display = 'none';
-            LoadGame(animale);
+        function drawBackground() {
+            var background_image = document.getElementById("backgrond");
+            var canvas = document.getElementById("canJigsaw");
+
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(background_image, 0, 0);
+            ctx.restore();
+        }
+        function goBack() {
+            
+            drawBackground();
+            showIndexScreen();
+        }
+        
+        function showGameScreen() {
+            //document.getElementById("canJigsaw").style.display = 'block';
+            document.getElementById("backArrow").style.display = 'block';
+            document.getElementById("indexScreen").style.display = 'none';
+        }
+        
+        function showIndexScreen() {
+            //document.getElementById("canJigsaw").style.display = 'block';
+            document.getElementById("backArrow").style.display = 'none';
+            document.getElementById("indexScreen").style.display = 'block';
         }
         
     </script> 
