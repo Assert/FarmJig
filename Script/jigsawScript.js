@@ -1,42 +1,33 @@
-﻿
-/*
- Create a own object with all the member variables in it
- Then the methods can be generic
- 
- Set config somewhere else
- 
-*/
-
-
 function jigsaw(canvasID, animale, rows,columns) {
-    
-    
-    var image1;
-    var background_image = document.getElementById("backgrond");
-    var shadow_image;
- 
-            if(animale=="pig"){
-                image1 = document.getElementById("pig");
-                shadow_image = document.getElementById("pigShadow");
-            }else if(animale=="sheep"){
-                image1 = document.getElementById("sheep");
-                shadow_image = document.getElementById("sheepShadow");
-            }else if(animale=="duck"){
-                image1 = document.getElementById("duck");
-                shadow_image = document.getElementById("duckShadow");
-            }else if(animale=="donkey"){
-                image1 = document.getElementById("donkey");
-                shadow_image = document.getElementById("donkeyShadow");
-            }else{
-                alert("Dev-exception: Error in animal string (jigsawScript.js)");            
-            }
-    
     
     var MODE = "EASY"; //HARD
 
+    
+    var background_image = document.getElementById("backgrond");
+
+    var puzzlePicture;
+    var puzzlePictureShadow;
+     if(animale=="pig"){
+            puzzlePicture = document.getElementById("pig");
+            puzzlePictureShadow = document.getElementById("pigShadow");
+        }else if(animale=="sheep"){
+            puzzlePicture = document.getElementById("sheep");
+            puzzlePictureShadow = document.getElementById("sheepShadow");
+        }else if(animale=="duck"){
+            puzzlePicture = document.getElementById("duck");
+            puzzlePictureShadow = document.getElementById("duckShadow");
+        }else if(animale=="donkey"){
+            puzzlePicture = document.getElementById("donkey");
+            puzzlePictureShadow = document.getElementById("donkeyShadow");
+        }else{
+            alert("Dev-exception: Error in animal string (jigsawScript.js)");            
+        }
+    
+    
+
     // Org size of image
-    var ORG_PUZZLE_WIDTH = image1.naturalWidth -1;
-    var ORG_PUZZLE_HEIGHT = image1.naturalHeight -1;
+    var ORG_PUZZLE_WIDTH = puzzlePicture.naturalWidth -1;
+    var ORG_PUZZLE_HEIGHT = puzzlePicture.naturalHeight -1;
 
 
     // Zoom image to
@@ -63,22 +54,16 @@ function jigsaw(canvasID, animale, rows,columns) {
     var PUZZLE_PADDING_TOP = 150;
     var PUZZLE_PADDING_LEFT = 200;
 
-  //  var image1;
     var canvas;
     var ctx;
 
     this.canvasID = canvasID;
-   // this.imageID = imageID;
 
     this.top = PUZZLE_PADDING_TOP;
     this.left = PUZZLE_PADDING_LEFT;
 
-    this.imageBlockList = [];
-    this.blockList = [];
-
-    this.selectedBlock = null;
-
-    this.mySelf = this;
+    this.imageBlockList = []; // Dette er brikker (index, x,y og isSelected)
+    this.blockList = [];  // Dette er slots
 
     this.initDrawing = function () {
         mySelf = this;
@@ -96,8 +81,6 @@ function jigsaw(canvasID, animale, rows,columns) {
         canvas.addEventListener("touchend", handleOnMouseUp, false);
         canvas.addEventListener("touchmove", handleOnMouseMove, false);
    
-       // image1 = document.getElementById(imageID);
-
         initializeNewGame();
     };
     
@@ -106,58 +89,44 @@ function jigsaw(canvasID, animale, rows,columns) {
         BLOCK_WIDTH = Math.round(SHOW_PUZZLE_WIDTH / TOTAL_COLUMNS);
         BLOCK_HEIGHT = Math.round(SHOW_PUZZLE_HEIGHT / TOTAL_ROWS);
 
-        // Draw image
-        SetImageBlock();
-        DrawGame();
+        devideBoardIntoPieces();
+        redrawGame();
     }
 
-    //Tegner brikkene før spillet
-    function SetImageBlock() {
-
-        var total = TOTAL_PIECES;
-        imageBlockList = [];
-        blockList = [];
-
-        var x1 = SHOW_PUZZLE_WIDTH + 20;
-        var x2 = canvas.width - 50;
-        var y2 = SHOW_PUZZLE_HEIGHT;
+    function devideBoardIntoPieces() {
+        this.imageBlockList = [];
+        this.blockList = [];
  
-        for (var i = 0; i < total; i++) {       
-            var imgBlock = eee(i);
-            imageBlockList.push(imgBlock);
+        for (var i = 0; i < TOTAL_PIECES; i++) {       
+            var imgBlock = makePuzzlePiece(i);
+            this.imageBlockList.push(imgBlock);
 
-            var x = PUZZLE_PADDING_LEFT + (i % TOTAL_COLUMNS) * BLOCK_WIDTH;
-            var y = PUZZLE_PADDING_TOP + Math.floor(i / TOTAL_COLUMNS) * BLOCK_HEIGHT;
-
-            var block = new puzzleBlock(i, x, y);
-            blockList.push(block);
-
+            var block = makeBoardBlock(i);
+            this.blockList.push(block);
         }
-
     }
-    // Redraw game
-    function DrawGame() {
+    
+    // Game is redrawn on every movement
+    // If we could XOR the moved piece that would be faster.
+    function redrawGame() {
         clear(ctx);
         drawLines();
-        drawAllImages();
+        drawNonSelectedPieces();
 
         if (selectedBlock) {
+            // Draw selected block while it is moving
             drawImageBlock(selectedBlock);
         }
     }
 
     function drawLines() {
         // Draw background image
-       // var background_image = document.getElementById("img3");
         ctx.drawImage(background_image, 0, 0);
 
-
         // Draw preview image
-        //var shadow_image = document.getElementById("img2");
-        // context.drawImage(img,sx,sy,swidth,sheight,dx,dy,dwidth,dheight);
-        ctx.drawImage(shadow_image, 0, 0, ORG_PUZZLE_WIDTH, ORG_PUZZLE_HEIGHT, PUZZLE_PADDING_LEFT, PUZZLE_PADDING_TOP, SHOW_PUZZLE_WIDTH, SHOW_PUZZLE_HEIGHT);
+        ctx.drawImage(puzzlePictureShadow, 0, 0, ORG_PUZZLE_WIDTH, ORG_PUZZLE_HEIGHT, PUZZLE_PADDING_LEFT, PUZZLE_PADDING_TOP, SHOW_PUZZLE_WIDTH, SHOW_PUZZLE_HEIGHT);
        
-       ctx.strokeStyle = "#000000"; 
+        ctx.strokeStyle = "#000000"; 
         ctx.lineWidth = 1;
         ctx.beginPath();
         
@@ -179,9 +148,9 @@ function jigsaw(canvasID, animale, rows,columns) {
         ctx.stroke();
     }
 
-    function drawAllImages() {
-        for (var i = 0; i < imageBlockList.length; i++) {
-            var imgBlock = imageBlockList[i];
+    function drawNonSelectedPieces() {
+        for (var i = 0; i < this.imageBlockList.length; i++) {
+            var imgBlock = this.imageBlockList[i];
             if (imgBlock.isSelected === false) {
                 drawImageBlock(imgBlock);
             }
@@ -196,7 +165,7 @@ function jigsaw(canvasID, animale, rows,columns) {
         ctx.save();
         var srcX = (index % TOTAL_COLUMNS) * PIECES_WIDTH;
         var srcY = Math.floor(index / TOTAL_COLUMNS) * PIECES_HEIGHT;
-        ctx.drawImage(image1, srcX, srcY, PIECES_WIDTH, PIECES_HEIGHT, destX, destY, destWidth, destHeight);
+        ctx.drawImage(puzzlePicture, srcX, srcY, PIECES_WIDTH, PIECES_HEIGHT, destX, destY, destWidth, destHeight);
         ctx.restore();
     }
 
@@ -230,8 +199,8 @@ function jigsaw(canvasID, animale, rows,columns) {
 
             clear(ctx);
 
-            for (var i = 0; i < imageBlockList.length; i++) {
-                var imgBlock = imageBlockList[i];
+            for (var i = 0; i < this.imageBlockList.length; i++) {
+                var imgBlock = this.imageBlockList[i];
 
                 imgBlock.x += 10;
                 imgBlock.y += 10;
@@ -239,7 +208,6 @@ function jigsaw(canvasID, animale, rows,columns) {
                 drawFinalImage(imgBlock.no, imgBlock.x, imgBlock.y, remove_width, remove_height);
             }
 
-            // DrawGame();
         } else {
 
             clearInterval(interval);
@@ -262,7 +230,7 @@ function jigsaw(canvasID, animale, rows,columns) {
         if (selectedBlock !== null) {
             imageBlockList[selectedBlock.no].isSelected = false;
         }
-        selectedBlock = GetPuzzlePiece(imageBlockList, e.pageX, e.pageY);
+        selectedBlock = FindSelectedPuzzlePiece(imageBlockList, e.pageX, e.pageY);
         if (selectedBlock) {
             imageBlockList[selectedBlock.no].isSelected = true;
                   offsetX = e.pageX - selectedBlock.x;
@@ -278,7 +246,7 @@ function jigsaw(canvasID, animale, rows,columns) {
       
             if(MODE=="HARD"){
                 //Trenger jeg dette i HARD MODE?
-                var block = GetPuzzlePiece(blockList, selectedBlock.x, selectedBlock.y);
+                var block = FindSelectedPuzzlePiece(blockList, selectedBlock.x, selectedBlock.y);
                 if (block) {
                     var blockOldImage = GetImageBlockOnEqual(imageBlockList, block.x, block.y);
                     if (blockOldImage === null) {
@@ -297,7 +265,7 @@ function jigsaw(canvasID, animale, rows,columns) {
         
             imageBlockList[index].isSelected = false;
             selectedBlock = null;
-            DrawGame();
+            redrawGame();
 
             if (isFinished()) {
                 OnFinished();
@@ -309,7 +277,7 @@ function jigsaw(canvasID, animale, rows,columns) {
         e.preventDefault();//Stops the default behavior
         if (selectedBlock) {
            var index = selectedBlock.no;
-            var block = GetPuzzlePiece(blockList, e.pageX, e.pageY);
+            var block = FindSelectedPuzzlePiece(blockList, e.pageX, e.pageY);
             if(block){
                 if(index==block.no && MODE!="HARD"){
                     imageBlockList[index].x = block.x;
@@ -317,7 +285,7 @@ function jigsaw(canvasID, animale, rows,columns) {
 
                       imageBlockList[index].isSelected = false;
                         selectedBlock = null;
-                        DrawGame();
+                        redrawGame();
                          if (isFinished()) {
                              OnFinished();
                        }
@@ -325,14 +293,14 @@ function jigsaw(canvasID, animale, rows,columns) {
                     //Move
                     selectedBlock.x = e.pageX  - offsetX;
                     selectedBlock.y = e.pageY  - offsetY;
-                    DrawGame();         
+                    redrawGame();         
                 }
             }else{
                 //Move
                 selectedBlock.x = e.pageX  - offsetX;
                 selectedBlock.y = e.pageY  - offsetY;
 
-                DrawGame();                
+                redrawGame();                
             }
         }
     }
@@ -345,53 +313,30 @@ function jigsaw(canvasID, animale, rows,columns) {
         c.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-
-// 2(a+2) + 2b = 2a + 2b +4 = c
-
-/*       axb=c
-        rad x col ramme ytterramme brikker
-         2x2 4  12 4
-         2x3 6  14 6
-         2x4 8  16 8
-         3x2 6  14 6
-         3x3 8  16 9
-         3x4 10 18 12
-         3x5 12 20 15
-         4x2 8  16 8
-         4x3 10 18 12
-         4x4 12 20 16
-         4x5 14 22 20
-         5x3 12 20 15
-         5x4 14 22 20
-         5x5 16 24 25
-        
-*/
-    
-    function eee(index) {
+    function makePuzzlePiece(index) {
             var randValX = (Math.random() * 1024);
-           // if (randValX<BLOCK_WIDTH) randValX=BLOCK_WIDTH;
             if (randValX>(1024-BLOCK_WIDTH)) randValX=1024-BLOCK_WIDTH;
         
             randValX = Math.round(randValX);
     
-            var randValY = (Math.random() * PUZZLE_PADDING_TOP) - BLOCK_HEIGHT;
-            randValY = Math.round(randValY);
-
+            var randValY;
              if (yesNo()){
-               //  randValY += SHOW_PUZZLE_HEIGHT + (PUZZLE_PADDING_TOP/2);
                 randValY=10;
             }else{
                 randValY=730 - BLOCK_HEIGHT;
             }
-        var imgBlock = new puzzleBlock(index, randValX, randValY);
-        return imgBlock;
+        return new puzzleBlock(index, randValX, randValY);
     }
 
+    function makeBoardBlock(index) {
+        var x = PUZZLE_PADDING_LEFT + (index % TOTAL_COLUMNS) * BLOCK_WIDTH;
+        var y = PUZZLE_PADDING_TOP + Math.floor(index / TOTAL_COLUMNS) * BLOCK_HEIGHT;
 
-
-
-
-    function GetPuzzlePiece(list, x, y) {        
+        return new puzzleBlock(index, x, y);        
+    }
+    
+    
+    function FindSelectedPuzzlePiece(list, x, y) {        
         for (var i = list.length - 1; i >= 0; i--) {
             var imgBlock = list[i];
 
@@ -402,8 +347,7 @@ function jigsaw(canvasID, animale, rows,columns) {
             var y2 = y1 + BLOCK_HEIGHT;
 
             if ((x >= x1 && x <= x2) && (y >= y1 && y <= y2)) {
-                var img = new puzzleBlock(imgBlock.no, imgBlock.x, imgBlock.y);
-                return img;
+                return new puzzleBlock(imgBlock.no, imgBlock.x, imgBlock.y);
             }
         }
         return null;
