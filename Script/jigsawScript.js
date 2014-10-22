@@ -10,25 +10,25 @@ De metoder som ikke hører til klassen skal ut
 
 function jigsaw(canvasID, animale, rows,columns) {
     
-    var MODE = "EASY"; //HARD
+    this.MODE = "EASY"; //HARD
 
     
-    var background_image = document.getElementById("backgrond");
+    this.background_image = document.getElementById("backgrond");
 
-    var puzzlePicture;
-    var puzzlePictureShadow;
+    this.puzzlePicture = "";
+    this.puzzlePictureShadow = "";
      if(animale=="pig"){
-            puzzlePicture = document.getElementById("pig");
-            puzzlePictureShadow = document.getElementById("pigShadow");
+            this.puzzlePicture = document.getElementById("pig");
+            this.puzzlePictureShadow = document.getElementById("pigShadow");
         }else if(animale=="sheep"){
-            puzzlePicture = document.getElementById("sheep");
-            puzzlePictureShadow = document.getElementById("sheepShadow");
+            this.puzzlePicture = document.getElementById("sheep");
+            this.puzzlePictureShadow = document.getElementById("sheepShadow");
         }else if(animale=="duck"){
-            puzzlePicture = document.getElementById("duck");
-            puzzlePictureShadow = document.getElementById("duckShadow");
+            this.puzzlePicture = document.getElementById("duck");
+            this.puzzlePictureShadow = document.getElementById("duckShadow");
         }else if(animale=="donkey"){
-            puzzlePicture = document.getElementById("donkey");
-            puzzlePictureShadow = document.getElementById("donkeyShadow");
+            this.puzzlePicture = document.getElementById("donkey");
+            this.puzzlePictureShadow = document.getElementById("donkeyShadow");
         }else{
             alert("Dev-exception: Error in animal string (jigsawScript.js)");            
         }
@@ -36,68 +36,69 @@ function jigsaw(canvasID, animale, rows,columns) {
     
 
     // Org size of image
-    var ORG_PUZZLE_WIDTH = puzzlePicture.naturalWidth -1;
-    var ORG_PUZZLE_HEIGHT = puzzlePicture.naturalHeight -1;
+    this.ORG_PUZZLE_WIDTH = this.puzzlePicture.naturalWidth -1;
+    this.ORG_PUZZLE_HEIGHT = this.puzzlePicture.naturalHeight -1;
 
 
     // Zoom image to
-    var SHOW_PUZZLE_WIDTH = 600;
-    var SHOW_PUZZLE_HEIGHT = 450;
+    this.SHOW_PUZZLE_WIDTH = 600;
+    this.SHOW_PUZZLE_HEIGHT = 450;
     
     // Grid to
-    var TOTAL_ROWS = rows;
-    var TOTAL_COLUMNS = columns; 
-    var TOTAL_PIECES = TOTAL_ROWS * TOTAL_COLUMNS;
+    this.TOTAL_ROWS = rows;
+    this.TOTAL_COLUMNS = columns; 
+    this.TOTAL_PIECES = this.TOTAL_ROWS * this.TOTAL_COLUMNS;
 
     // Size of the pieces
-    var PIECES_WIDTH = Math.round(ORG_PUZZLE_WIDTH / TOTAL_COLUMNS);
-    var PIECES_HEIGHT = Math.round(ORG_PUZZLE_HEIGHT / TOTAL_ROWS);
+    this.PIECES_WIDTH = Math.round(this.ORG_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
+    this.PIECES_HEIGHT = Math.round(this.ORG_PUZZLE_HEIGHT / this.TOTAL_ROWS);
 
-    var BLOCK_WIDTH = 0; // Math.round(SHOW_PUZZLE_WIDTH / TOTAL_COLUMNS);
-    var BLOCK_HEIGHT = 0; // Math.round(SHOW_PUZZLE_HEIGHT / TOTAL_ROWS);
+    this.BLOCK_WIDTH = 0; // Math.round(this.SHOW_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
+    this.BLOCK_HEIGHT = 0; // Math.round(this.SHOW_PUZZLE_HEIGHT / this.TOTAL_ROWS);
     
     // Selected piece offset from mouse point
-    var offsetX = 0;
-    var offsetY = 0;
+    this.offsetX = 0;
+    this.offsetY = 0;
 
     // Set jugsaw to middle
-    var PUZZLE_PADDING_TOP = 150;
-    var PUZZLE_PADDING_LEFT = 200;
+    this.PUZZLE_PADDING_TOP = 150;
+    this.PUZZLE_PADDING_LEFT = 200;
 
-    var canvas;
-    var ctx;
+    this.canvas = null;
+    this.ctx = null;
 
     this.canvasID = canvasID;
 
-    this.top = PUZZLE_PADDING_TOP;
-    this.left = PUZZLE_PADDING_LEFT;
+    this.top = this.PUZZLE_PADDING_TOP;
+    this.left = this.PUZZLE_PADDING_LEFT;
 
-    this.imageBlockList = []; // Dette er brikker (index, x,y og isSelected)
-    this.blockList = [];  // Dette er slots
-
+    var imageBlockList = []; // Dette er brikker (index, x,y og isSelected)
+    var blockList = [];  // Dette er slots
+    var selectedBlock = null;
+    var mySelf;
     this.initDrawing = function () {
         mySelf = this;
-        selectedBlock = null;
-        canvas = document.getElementById(canvasID);
 
-        ctx = canvas.getContext('2d');
+        this.canvas = document.getElementById(this.canvasID);
+
+        this.ctx = this.canvas.getContext('2d');
 
         // register events
-        canvas.onmousedown = this.handleOnMouseDown;
-        canvas.onmouseup = this.handleOnMouseUp;
-        canvas.onmousemove = this.handleOnMouseMove;
+        this.canvas.onmousedown = this.handleOnMouseDown;
+        this.canvas.onmouseup = this.handleOnMouseUp;
+        this.canvas.onmousemove = this.handleOnMouseMove;
         
-        canvas.addEventListener("touchstart", this.handleOnMouseDown, false);
-        canvas.addEventListener("touchend", this.handleOnMouseUp, false);
-        canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
+        this.canvas.addEventListener("touchstart", this.handleOnMouseDown, false);
+        this.canvas.addEventListener("touchend", this.handleOnMouseUp, false);
+        this.canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
    
         this.initializeNewGame();
     };
     
     this.initializeNewGame = function() {
         // Set block 
-        BLOCK_WIDTH = Math.round(SHOW_PUZZLE_WIDTH / TOTAL_COLUMNS);
-        BLOCK_HEIGHT = Math.round(SHOW_PUZZLE_HEIGHT / TOTAL_ROWS);
+        this.BLOCK_WIDTH = Math.round(this.SHOW_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
+        this.BLOCK_HEIGHT = Math.round(this.SHOW_PUZZLE_HEIGHT / this.TOTAL_ROWS);
 
         this.devideBoardIntoPieces();
         this.redrawGame();
@@ -107,7 +108,7 @@ function jigsaw(canvasID, animale, rows,columns) {
         imageBlockList = [];
         blockList = [];
  
-        for (var i = 0; i < TOTAL_PIECES; i++) {       
+        for (var i = 0; i < this.TOTAL_PIECES; i++) {       
             var imgBlock = this.makePuzzlePiece(i);
             imageBlockList.push(imgBlock);
 
@@ -116,10 +117,11 @@ function jigsaw(canvasID, animale, rows,columns) {
         }
     };
     
+    
     // Game is redrawn on every movement
     // If we could XOR the moved piece that would be faster.
     this.redrawGame = function() {
-        mySelf.clear(ctx);
+        mySelf.clear(this.ctx);
         mySelf.drawLines();
         mySelf.drawNonSelectedPieces();
 
@@ -131,31 +133,31 @@ function jigsaw(canvasID, animale, rows,columns) {
 
     this.drawLines = function() {
         // Draw background image
-        ctx.drawImage(background_image, 0, 0);
+        this.ctx.drawImage(this.background_image, 0, 0);
 
         // Draw preview image
-        ctx.drawImage(puzzlePictureShadow, 0, 0, ORG_PUZZLE_WIDTH, ORG_PUZZLE_HEIGHT, PUZZLE_PADDING_LEFT, PUZZLE_PADDING_TOP, SHOW_PUZZLE_WIDTH, SHOW_PUZZLE_HEIGHT);
+        this.ctx.drawImage(this.puzzlePictureShadow, 0, 0, this.ORG_PUZZLE_WIDTH, this.ORG_PUZZLE_HEIGHT, this.PUZZLE_PADDING_LEFT, this.PUZZLE_PADDING_TOP, this.SHOW_PUZZLE_WIDTH, this.SHOW_PUZZLE_HEIGHT);
        
-        ctx.strokeStyle = "#000000"; 
-        ctx.lineWidth = 1;
-        ctx.beginPath();
+        this.ctx.strokeStyle = "#000000"; 
+        this.ctx.lineWidth = 1;
+        this.ctx.beginPath();
         
         // draw verticle lines
-        for (var i = 0; i <= TOTAL_COLUMNS; i++) {
-            var x = PUZZLE_PADDING_LEFT + (BLOCK_WIDTH * i);
-            ctx.moveTo(x, PUZZLE_PADDING_TOP);
-            ctx.lineTo(x, 450+PUZZLE_PADDING_TOP);
+        for (var i = 0; i <= this.TOTAL_COLUMNS; i++) {
+            var x = this.PUZZLE_PADDING_LEFT + (this.BLOCK_WIDTH * i);
+            this.ctx.moveTo(x, this.PUZZLE_PADDING_TOP);
+            this.ctx.lineTo(x, 450+this.PUZZLE_PADDING_TOP);
         }
 
         // draw horizontal lines
-        for (i = 0; i <= TOTAL_ROWS; i++) {
-            var y = PUZZLE_PADDING_TOP + (BLOCK_HEIGHT * i);
-            ctx.moveTo(PUZZLE_PADDING_LEFT, y);
-            ctx.lineTo(600+PUZZLE_PADDING_LEFT, y);
+        for (i = 0; i <= this.TOTAL_ROWS; i++) {
+            var y = this.PUZZLE_PADDING_TOP + (this.BLOCK_HEIGHT * i);
+            this.ctx.moveTo(this.PUZZLE_PADDING_LEFT, y);
+            this.ctx.lineTo(600+this.PUZZLE_PADDING_LEFT, y);
         }
 
-        ctx.closePath();
-        ctx.stroke();
+        this.ctx.closePath();
+        this.ctx.stroke();
     };
 
     this.drawNonSelectedPieces = function() {
@@ -168,22 +170,22 @@ function jigsaw(canvasID, animale, rows,columns) {
     };
 
     this.drawImageBlock = function(imgBlock) {
-        this.drawFinalImage(imgBlock.no, imgBlock.x, imgBlock.y, BLOCK_WIDTH, BLOCK_HEIGHT);
+        this.drawFinalImage(imgBlock.no, imgBlock.x, imgBlock.y, this.BLOCK_WIDTH, this.BLOCK_HEIGHT);
     };
 
     this.drawFinalImage = function(index, destX, destY, destWidth, destHeight) {
-        ctx.save();
-        var srcX = (index % TOTAL_COLUMNS) * PIECES_WIDTH;
-        var srcY = Math.floor(index / TOTAL_COLUMNS) * PIECES_HEIGHT;
-        ctx.drawImage(puzzlePicture, srcX, srcY, PIECES_WIDTH, PIECES_HEIGHT, destX, destY, destWidth, destHeight);
-        ctx.restore();
+        this.ctx.save();
+        var srcX = (index % this.TOTAL_COLUMNS) * this.PIECES_WIDTH;
+        var srcY = Math.floor(index / this.TOTAL_COLUMNS) * this.PIECES_HEIGHT;
+        this.ctx.drawImage(this.puzzlePicture, srcX, srcY, this.PIECES_WIDTH, this.PIECES_HEIGHT, destX, destY, destWidth, destHeight);
+        this.ctx.restore();
     };
 /*
     function drawImage(image) {
         alert("hjkhj");
-        ctx.save();
-        ctx.drawImage(image, 0, 0, BLOCK_WIDTH, BLOCK_WIDTH, 10, 10, BLOCK_WIDTH, BLOCK_WIDTH);
-        ctx.restore();
+        this.ctx.save();
+        this.ctx.drawImage(image, 0, 0, this.BLOCK_WIDTH, this.BLOCK_WIDTH, 10, 10, this.BLOCK_WIDTH, this.BLOCK_WIDTH);
+        this.ctx.restore();
     }
 */
     var interval = null;
@@ -196,8 +198,8 @@ function jigsaw(canvasID, animale, rows,columns) {
         //audioElement.setAttribute('src', 'Audio/finish.mp3');
         //audioElement.play();
 
-        remove_width = BLOCK_WIDTH;
-        remove_height = BLOCK_HEIGHT;
+        remove_width = this.BLOCK_WIDTH;
+        remove_height = this.BLOCK_HEIGHT;
         // Clear Board
         interval = setInterval(function () { mySelf.ClearGame(); }, 100);
     };
@@ -208,7 +210,7 @@ function jigsaw(canvasID, animale, rows,columns) {
 
         if (remove_width > 0 && remove_height > 0) {
 
-            mySelf.clear(ctx);
+            mySelf.clear(this.ctx);
             for (var i = 0; i < imageBlockList.length; i++) {
                 var imgBlock = imageBlockList[i];
 
@@ -237,24 +239,29 @@ function jigsaw(canvasID, animale, rows,columns) {
     this.handleOnMouseDown = function(e) {
         e.preventDefault();//Stops the default behavior
         // remove old selected
+        
+
         if (selectedBlock !== null) {
             imageBlockList[selectedBlock.no].isSelected = false;
         }
+
         selectedBlock = mySelf.FindSelectedPuzzlePiece(imageBlockList, e.pageX, e.pageY);
+        
         if (selectedBlock) {
             imageBlockList[selectedBlock.no].isSelected = true;
-                  offsetX = e.pageX - selectedBlock.x;
-                  offsetY = e.pageY - selectedBlock.y;
+                  this.offsetX = e.pageX - selectedBlock.x;
+                  this.offsetY = e.pageY - selectedBlock.y;
         }
     };
 
 
     this.handleOnMouseUp = function(e) {
+        
         //In hard mode blocks will snapp to any slot, in easy they will not
         if (selectedBlock) {
             var index = selectedBlock.no;
       
-            if(MODE=="HARD"){
+            if(this.MODE=="HARD"){
                 //Trenger jeg dette i HARD MODE?
                 var block = mySelf.FindSelectedPuzzlePiece(blockList, selectedBlock.x, selectedBlock.y);
                 if (block) {
@@ -284,12 +291,16 @@ function jigsaw(canvasID, animale, rows,columns) {
     };
 
     this.handleOnMouseMove = function(e) {
+
+        // Denne fyrer hele tiden..
+        
+        
         e.preventDefault();//Stops the default behavior
         if (selectedBlock) {
            var index = selectedBlock.no;
             var block = mySelf.FindSelectedPuzzlePiece(blockList, e.pageX, e.pageY);
             if(block){
-                if(index==block.no && MODE!="HARD"){
+                if(index==block.no && this.MODE!="HARD"){
                     imageBlockList[index].x = block.x;
                     imageBlockList[index].y = block.y;
 
@@ -301,14 +312,14 @@ function jigsaw(canvasID, animale, rows,columns) {
                        }
                 }else{
                     //Move
-                    selectedBlock.x = e.pageX  - offsetX;
-                    selectedBlock.y = e.pageY  - offsetY;
+                    selectedBlock.x = e.pageX  - this.offsetX;
+                    selectedBlock.y = e.pageY  - this.offsetY;
                     mySelf.redrawGame();         
                 }
             }else{
                 //Move
-                selectedBlock.x = e.pageX  - offsetX;
-                selectedBlock.y = e.pageY  - offsetY;
+                selectedBlock.x = e.pageX  - this.offsetX;
+                selectedBlock.y = e.pageY  - this.offsetY;
 
                 mySelf.redrawGame();                
             }
@@ -320,12 +331,12 @@ function jigsaw(canvasID, animale, rows,columns) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     this.clear = function(c) {
-        c.clearRect(0, 0, canvas.width, canvas.height);
+        c.clearRect(0, 0, this.canvas.width, this.canvas.height);
     };
 
     this.makePuzzlePiece = function(index) {
             var randValX = (Math.random() * 1024);
-            if (randValX>(1024-BLOCK_WIDTH)) randValX=1024-BLOCK_WIDTH;
+            if (randValX>(1024-this.BLOCK_WIDTH)) randValX=1024-this.BLOCK_WIDTH;
         
             randValX = Math.round(randValX);
     
@@ -333,14 +344,14 @@ function jigsaw(canvasID, animale, rows,columns) {
              if (yesNo()){
                 randValY=10;
             }else{
-                randValY=730 - BLOCK_HEIGHT;
+                randValY=730 - this.BLOCK_HEIGHT;
             }
         return new puzzleBlock(index, randValX, randValY);
     };
 
     this.makeBoardBlock = function(index) {
-        var x = PUZZLE_PADDING_LEFT + (index % TOTAL_COLUMNS) * BLOCK_WIDTH;
-        var y = PUZZLE_PADDING_TOP + Math.floor(index / TOTAL_COLUMNS) * BLOCK_HEIGHT;
+        var x = this.PUZZLE_PADDING_LEFT + (index % this.TOTAL_COLUMNS) * this.BLOCK_WIDTH;
+        var y = this.PUZZLE_PADDING_TOP + Math.floor(index / this.TOTAL_COLUMNS) * this.BLOCK_HEIGHT;
 
         return new puzzleBlock(index, x, y);        
     };
@@ -351,10 +362,10 @@ function jigsaw(canvasID, animale, rows,columns) {
             var imgBlock = list[i];
 
             var x1 = imgBlock.x;
-            var x2 = x1 + BLOCK_WIDTH;
+            var x2 = x1 + this.BLOCK_WIDTH;
 
             var y1 = imgBlock.y;
-            var y2 = y1 + BLOCK_HEIGHT;
+            var y2 = y1 + this.BLOCK_HEIGHT;
 
             if ((x >= x1 && x <= x2) && (y >= y1 && y <= y2)) {
                 return new puzzleBlock(imgBlock.no, imgBlock.x, imgBlock.y);
@@ -378,7 +389,7 @@ function jigsaw(canvasID, animale, rows,columns) {
     };
 
     this.isFinished = function() {
-        var total = TOTAL_PIECES;
+        var total = this.TOTAL_PIECES;
         for (var i = 0; i < total; i++) {
             var img = imageBlockList[i];
             var block = blockList[i];
