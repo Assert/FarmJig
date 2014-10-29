@@ -1,2 +1,8 @@
-Greenfields.*
+# Files used by Intel XDK
+*.xdk*
+
+# IntelliJ project settings folder
 .idea
+
+# IntelliJ project file
+*.iml
