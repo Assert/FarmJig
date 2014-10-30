@@ -43,6 +43,9 @@
         
 
         function init() {
+            // Preload the mp3
+            intel.xdk.player.loadSound("Audio/finish.mp3");
+            
             intel.xdk.device.setRotateOrientation('landscape');
 
             intel.xdk.device.hideSplashScreen();   
@@ -77,12 +80,11 @@
 
             var ctx = canvas.getContext('2d');
             ctx.canvas.width  = window.innerWidth;
-            ctx.canvas.height = window.innerHeight;            
+            ctx.canvas.height = window.innerHeight;  
             ctx.drawImage(background_image, 0, 0);
             ctx.restore();
         }
         function goBack() {
-            
             drawBackground();
             showIndexScreen();
         }

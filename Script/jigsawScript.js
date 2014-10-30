@@ -169,6 +169,8 @@ function jigsaw(canvasID, animal, rows, columns) {
         //audioElement.setAttribute('src', 'Audio/finish.mp3');
         //audioElement.play();
 
+        intel.xdk.player.startAudio("Audio/finish.mp3",false);
+        
         remove_width = this.BLOCK_WIDTH;
         remove_height = this.BLOCK_HEIGHT;
         // Clear Board
