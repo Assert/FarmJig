@@ -37,6 +37,9 @@
         var game;
         document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);               
     
+        
+        // Listen for game.eventGameEnded() to see if game has ended (then clear and show index)
+        
         function onDeviceReady(){
             init();
         }  
@@ -85,6 +88,11 @@
             ctx.restore();
         }
         function goBack() {
+            // Siden disse er globale må de resettes her.. ikke bra
+            imageBlockList = []; // Dette er brikker (index, x,y og isSelected)
+            blockList = [];  // Dette er slots
+            selectedBlock = null;
+  
             drawBackground();
             showIndexScreen();
         }

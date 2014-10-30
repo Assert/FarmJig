@@ -175,6 +175,8 @@ function jigsaw(canvasID, animal, rows, columns) {
         remove_height = this.BLOCK_HEIGHT;
         // Clear Board
         interval = setInterval(function () { mySelf.ClearGame(); }, 100);
+        
+        // Raise event "eventGameEnded()"
     };
 
     this.ClearGame = function () {
