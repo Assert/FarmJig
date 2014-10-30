@@ -10,7 +10,7 @@
 <body id="index">   
     <img src="Images/Arrow.png" id="backArrow" onclick="javascript:goBack()"/>
     
-    <canvas id="canJigsaw" width="1024" height="768"></canvas>
+    <canvas id="canJigsaw" width="1" height="1"></canvas>
     
     <div id="indexScreen">
     <img src="Images/Pig.png" width="300" style="position:absolute; top:430px; left:10px;" onclick="SelectAnimal('pig')" />
@@ -76,6 +76,8 @@
             var canvas = document.getElementById("canJigsaw");
 
             var ctx = canvas.getContext('2d');
+            ctx.canvas.width  = window.innerWidth;
+            ctx.canvas.height = window.innerHeight;            
             ctx.drawImage(background_image, 0, 0);
             ctx.restore();
         }
