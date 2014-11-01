@@ -8,15 +8,15 @@
     <script type="text/javascript" src="Script/jigsawScript.js"></script>
 </head>
 <body id="index">   
-    <img src="Images/Arrow.png" id="backArrow" onclick="javascript:goBack()"/>
+    <img src="Images/Arrow.png" id="backArrow" />
     
     <canvas id="canJigsaw" width="1" height="1"></canvas>
     
     <div id="indexScreen">
-    <img src="Images/Pig.png" width="300" style="position:absolute; top:430px; left:10px;" onclick="SelectAnimal('pig')" />
-    <img src="Images/Sheep.png" width="300" style="position:absolute; top:420px; left:300px;" onclick="SelectAnimal('sheep')" />
-    <img src="Images/Duck.png" width="100" style="position:absolute; top:420px; left:620px;" onclick="SelectAnimal('duck')" />
-    <img src="Images/Donkey.png" width="300" style="position:absolute; top:420px; left:700px;" onclick="SelectAnimal('donkey')" />
+    <img id="indexPig" src="Images/Pig.png" width="300" style="position:absolute; top:430px; left:10px;" />
+    <img id="indexSheep" src="Images/Sheep.png" width="300" style="position:absolute; top:420px; left:300px;" />
+    <img id="indexDuck" src="Images/Duck.png" width="100" style="position:absolute; top:420px; left:620px;" />
+    <img id="indexDonkey" src="Images/Donkey.png" width="300" style="position:absolute; top:420px; left:700px;" />
     </div>
     
     <img id="sheep" width="1" height="1" src="Images/Sheep.png"></img>
@@ -34,46 +34,42 @@
 
     <script type="text/javascript" language="javascript">
         document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);               
-    
-        
-        // Listen for game.eventGameEnded() to see if game has ended (then clear and show index)
-        
+
         function onDeviceReady(){
             init();
         }  
-        
 
         function init() {
             // Preload the mp3
             intel.xdk.player.loadSound("Audio/finish.mp3");
-            
             intel.xdk.device.setRotateOrientation('landscape');
-
             intel.xdk.device.hideSplashScreen();   
             
             drawBackground();
-
             showIndexScreen();
             
-
+            SelectAnimal('');
         }
-        
+
         function SelectAnimal(animalName){
-            showGameScreen();
-            drawBackground();
+           // showGameScreen();
+            //drawBackground();
+            
             var totalRows = 2;
             var totalColumns = 3;         
             var canvasID = "canJigsaw";
-            
+
             // ikke ta animal inn i contructor
             // lag game obj ved init, og send inn
             // startGame(animal)
             // clerGame();
             var game;
 
-            game = new jigsaw(canvasID, animalName, totalRows, totalColumns);
-   
+            game = new Jigsaw(canvasID, animalName, totalRows, totalColumns);
+
             game.loadGame(); 
+           // game.startPuzzle();
+
         }
         
         function drawBackground() {
@@ -86,19 +82,21 @@
             ctx.drawImage(background_image, 0, 0);
             ctx.restore();
         }
+        /*
         function goBack() {
+
             drawBackground();
             showIndexScreen();
         }
-        
+        */
         function showGameScreen() {
             document.getElementById("backArrow").style.display = 'block';
-            document.getElementById("indexScreen").style.display = 'none';
+            document.getElementById("indexScreen").style.visibility = 'hidden';
         }
         
         function showIndexScreen() {
             document.getElementById("backArrow").style.display = 'none';
-            document.getElementById("indexScreen").style.display = 'block';
+            document.getElementById("indexScreen").style.visibility = 'visible';
         }
         
     </script> 
