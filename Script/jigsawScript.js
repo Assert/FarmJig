@@ -1,31 +1,34 @@
 var Jigsaw = function() {
     
+    
+    //1024 - 748
+    
     var constructor = function Jigsaw(canvasID, rows, columns)
     {
         var privateMethod = function() {};
         this.publicMethod = function() {};
         
         this.MODE = "HARD"; //HARD and EASY
-
-        this.background_image = document.getElementById("backgrond");
-        
-        // todo : I need the size of the pieces.. they are all the same so I just use mr. Pig
-        // fix this some time
-        this.puzzlePicture = document.getElementById("pig");
-        this.puzzlePictureShadow = document.getElementById("pigShadow");
-
-        // Org size of image
-        this.ORG_PUZZLE_WIDTH = this.puzzlePicture.naturalWidth -1;
-        this.ORG_PUZZLE_HEIGHT = this.puzzlePicture.naturalHeight -1;
-
-        // Zoom image to
-        // todo: hard coded zoom
-        this.SHOW_PUZZLE_WIDTH = 600;
-        this.SHOW_PUZZLE_HEIGHT = 450;
-
         // Grid to
         this.TOTAL_ROWS = rows;
         this.TOTAL_COLUMNS = columns; 
+
+        this.background_image = document.getElementById("backgrond");
+        
+        this.canvas = document.getElementById(canvasID);
+        this.ctx = this.canvas.getContext('2d');
+
+        
+        
+        // Org size of image
+        this.ORG_PUZZLE_WIDTH = this.ctx.canvas.width;
+        this.ORG_PUZZLE_HEIGHT = this.ctx.canvas.height;
+
+        // Zoom image to (This is the "show puzzle size)
+        // Todo : All the size vars need to recalc from the image size (like pig) and not the canvas
+        this.SHOW_PUZZLE_WIDTH = this.ORG_PUZZLE_WIDTH / 2;
+        this.SHOW_PUZZLE_HEIGHT = this.ORG_PUZZLE_HEIGHT / 2;
+
 
         // Size of the pieces
         this.PIECES_WIDTH = Math.round(this.ORG_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
@@ -34,25 +37,12 @@ var Jigsaw = function() {
         this.BLOCK_WIDTH = Math.round(this.SHOW_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
         this.BLOCK_HEIGHT = Math.round(this.SHOW_PUZZLE_HEIGHT / this.TOTAL_ROWS);
 
-        // Selected piece offset from mouse point
-        // Ikke sikker på hva denne gjør lenger
-        this.offsetX = 0;
-        this.offsetY = 0;
-
         // Set jugsaw to middle
-        // Todo: hard coded padding
-        this.PUZZLE_PADDING_TOP = 150;
-        this.PUZZLE_PADDING_LEFT = 200;
+        this.PUZZLE_PADDING_TOP = this.SHOW_PUZZLE_HEIGHT / 2;
+        this.PUZZLE_PADDING_LEFT = this.SHOW_PUZZLE_WIDTH / 2;
 
-        this.top = this.PUZZLE_PADDING_TOP;
-        this.left = this.PUZZLE_PADDING_LEFT;
-
-        this.pieceList = [];
-        this.slotList = [];
         this.selectedPiece = null;
 
-        this.canvas = document.getElementById(canvasID);
-        this.ctx = this.canvas.getContext('2d');
 
         var mySelf;
         this.loadGame = function () {
@@ -172,17 +162,14 @@ var Jigsaw = function() {
         this.finishGame = function() {
             intel.xdk.player.startAudio("Audio/finish.mp3",false);
 
-            //this.interval = null;
             this.remove_width = this.BLOCK_WIDTH;
             this.remove_height = this.BLOCK_HEIGHT;
             this.interval = setInterval(function () { mySelf.endGame(); }, 100);
-            // Raise event "eventGameEnded()"
         };
 
-        // todo: this is hard coded pixel size.. 10,20 and 30
         this.endGame = function () {
-            this.remove_width -= 30;
-            this.remove_height -= 20;
+            this.remove_width -= this.SHOW_PUZZLE_WIDTH / 20;
+            this.remove_height -= this.SHOW_PUZZLE_HEIGHT / 20;
 
             if (this.remove_width >= 0 && this.remove_height >= 0) {
                 this.clearCanvas();
@@ -191,16 +178,14 @@ var Jigsaw = function() {
                 // Redraw all pieces
                 for (var i = 0; i < this.pieceList.length; i++) {
                     var imgBlock = this.pieceList[i];
-                    imgBlock.x += 10;
-                    imgBlock.y += 10;
+                    imgBlock.x += this.SHOW_PUZZLE_WIDTH / 40;
+                    imgBlock.y += this.SHOW_PUZZLE_HEIGHT / 40;
                     this.drawSection(imgBlock.no, imgBlock.x, imgBlock.y, this.remove_width, this.remove_height);
                 }
             } else {
                 clearInterval(this.interval);
 
                 this.showIndex();
-                // Restart game
-                //this.startPuzzle(); 
             }
         };
 
@@ -303,7 +288,6 @@ var Jigsaw = function() {
             }
         };
 
-        // todo: error marging is hard-coded (might need to change on other screen sizes)
         // Check if selected piece is close to correct slot
         this.checkIfWeHoverRightSlot = function() {
             var correctSlot = this.slotList[this.selectedPiece.no];
@@ -311,26 +295,27 @@ var Jigsaw = function() {
             var offsetX = Math.abs(this.selectedPiece.x - correctSlot.x);
             var offsetY = Math.abs(this.selectedPiece.y - correctSlot.y);
 
-            var errorMargin = 30;
-            if (offsetX <errorMargin && offsetY <errorMargin) {
+            var errorMarginX = this.SHOW_PUZZLE_WIDTH / 20;
+            var errorMarginY = this.SHOW_PUZZLE_HEIGHT / 20;
+            
+            if (offsetX <errorMarginX && offsetY <errorMarginY) {
                 return correctSlot;
             }
             return null;
         };
 
-        // Todo: 1024 10 and 730 is hard-code here?
         // Give pieces a random x and y start position (by index)
         this.makePuzzlePiece = function(index) {
-                var randValX = (Math.random() * 1024);
-                if (randValX>(1024-this.BLOCK_WIDTH)) randValX=1024-this.BLOCK_WIDTH;
+                var randValX = (Math.random() * this.ORG_PUZZLE_WIDTH);
+                if (randValX>(this.ORG_PUZZLE_WIDTH-this.BLOCK_WIDTH)) randValX=this.ORG_PUZZLE_WIDTH-this.BLOCK_WIDTH;
 
                 randValX = Math.round(randValX);
 
                 var randValY;
                  if (yesNo()){
-                    randValY=10;
+                    randValY=this.ORG_PUZZLE_HEIGHT / 70;
                 }else{
-                    randValY=730 - this.BLOCK_HEIGHT;
+                    randValY=this.ORG_PUZZLE_HEIGHT - this.BLOCK_HEIGHT;
                 }
             return new puzzlePiece(index, randValX, randValY);
         };
@@ -385,7 +370,6 @@ var Jigsaw = function() {
         };
 
 
-        // todo: has hard coded size elemets (450 and 600)
         this.drawGridLines = function() {
             this.ctx.strokeStyle = "#000000"; 
             this.ctx.lineWidth = 1;
@@ -395,14 +379,14 @@ var Jigsaw = function() {
             for (var i = 0; i <= this.TOTAL_COLUMNS; i++) {
                 var x = this.PUZZLE_PADDING_LEFT + (this.BLOCK_WIDTH * i);
                 this.ctx.moveTo(x, this.PUZZLE_PADDING_TOP);
-                this.ctx.lineTo(x, 450+this.PUZZLE_PADDING_TOP);
+                this.ctx.lineTo(x, this.SHOW_PUZZLE_HEIGHT+this.PUZZLE_PADDING_TOP);
             }
 
             // draw horizontal lines
             for (i = 0; i <= this.TOTAL_ROWS; i++) {
                 var y = this.PUZZLE_PADDING_TOP + (this.BLOCK_HEIGHT * i);
                 this.ctx.moveTo(this.PUZZLE_PADDING_LEFT, y);
-                this.ctx.lineTo(600+this.PUZZLE_PADDING_LEFT, y);
+                this.ctx.lineTo(this.SHOW_PUZZLE_WIDTH+this.PUZZLE_PADDING_LEFT, y);
             }
 
             this.ctx.closePath();

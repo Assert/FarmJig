@@ -36,10 +36,6 @@
         document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);               
 
         function onDeviceReady(){
-            init();
-        }  
-
-        function init() {
             // Preload the mp3
             intel.xdk.player.loadSound("Audio/finish.mp3");
             intel.xdk.device.setRotateOrientation('landscape');
@@ -48,17 +44,13 @@
             drawBackground();
             showIndexScreen();
             
-            SelectAnimal();
-        }
-
-        function SelectAnimal(){
             var totalRows = 2;
             var totalColumns = 3;         
             var canvasID = "canJigsaw";
 
             var game = new Jigsaw(canvasID, totalRows, totalColumns);
             game.loadGame(); 
-        }
+        }  
         
         function drawBackground() {
             var background_image = document.getElementById("backgrond");
