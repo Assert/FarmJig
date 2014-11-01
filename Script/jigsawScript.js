@@ -237,26 +237,28 @@ function jigsaw(canvasID, animal, rows, columns) {
         //In hard mode blocks will snapp to any slot, in easy they will not
         if (mySelf.selectedPiece) {
             var index = mySelf.selectedPiece.no;
-      
-            if(this.MODE=="HARD"){
+            if(mySelf.MODE=="HARD"){
+                var correctSlot = mySelf.slotList[index];
+                var offsetX = Math.abs(mySelf.selectedPiece.x - correctSlot.x);
+                var offsetY = Math.abs(mySelf.selectedPiece.y - correctSlot.y);
 
-                var block = mySelf.FindSelectedPuzzlePiece(mySelf.slotList, mySelf.selectedPiece.x, mySelf.selectedPiece.y);
-                if (block) {
-                    var blockOldImage = mySelf.GetImageBlockOnEqual(mySelf.pieceList, block.x, block.y);
-                    if (blockOldImage === null) {
-                        mySelf.pieceList[index].x = block.x;
-                        mySelf.pieceList[index].y = block.y;
-                    }
-                }
-                else {
+                var errorMargin = 30;
+                if (offsetX <errorMargin && offsetY <errorMargin) {
+                    // Snap
+                    mySelf.pieceList[index].x = correctSlot.x;
+                    mySelf.pieceList[index].y = correctSlot.y;
+                } else {
+                    // Save position on drop
                     mySelf.pieceList[index].x = mySelf.selectedPiece.x;
                     mySelf.pieceList[index].y = mySelf.selectedPiece.y;
                 }
             }else{
+                // save position on drop
                 mySelf.pieceList[index].x = mySelf.selectedPiece.x;
                 mySelf.pieceList[index].y = mySelf.selectedPiece.y;        
             }
-        
+            
+            // Unselect piece
             mySelf.pieceList[index].isSelected = false;
             mySelf.selectedPiece = null;
             mySelf.redrawGame();
@@ -337,6 +339,7 @@ function jigsaw(canvasID, animal, rows, columns) {
         return new puzzleBlock(index, x, y);        
     };
     
+    // Ingen this
     this.FindSelectedPuzzlePiece = function(list, x, y) {        
         for (var i = list.length - 1; i >= 0; i--) {
             var imgBlock = list[i];
@@ -354,14 +357,19 @@ function jigsaw(canvasID, animal, rows, columns) {
         return null;
     };
 
-    this.GetImageBlockOnEqual = function(list, x, y) {
-        for (var i = 0; i < list.length; i++) {
-            var imgBlock = list[i];
-
-            var x1 = imgBlock.x;
-            var y1 = imgBlock.y;
-            if ((x == x1) && (y == y1)) {
-                return new puzzleBlock(imgBlock.no, imgBlock.x, imgBlock.y);
+    // Ingen ref til this
+    // Slett denne
+    this.GetImageBlockOnEqual = function(pieceList, slotX, slotY) {
+        alert("checking");
+        for (var i = 0; i < pieceList.length; i++) {
+            var piece = pieceList[i];
+            var pieceX = piece.x;
+            var pieceY = piece.y;
+            if ((slotX == pieceX) && (slotY == pieceY)) {
+                alert("Ja");
+                return new puzzleBlock(piece.no, piece.x, piece.y);
+            }else{
+                alert("Nei: x=" + slotX + " mot " + pieceX);
             }
         }
         return null;
