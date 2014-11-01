@@ -33,8 +33,9 @@ function jigsaw(canvasID, animal, rows, columns) {
     // Grid to
     this.TOTAL_ROWS = rows;
     this.TOTAL_COLUMNS = columns; 
-    this.TOTAL_PIECES = this.TOTAL_ROWS * this.TOTAL_COLUMNS;
 
+
+    
     // Size of the pieces
     this.PIECES_WIDTH = Math.round(this.ORG_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
     this.PIECES_HEIGHT = Math.round(this.ORG_PUZZLE_HEIGHT / this.TOTAL_ROWS);
@@ -52,8 +53,6 @@ function jigsaw(canvasID, animal, rows, columns) {
     this.PUZZLE_PADDING_TOP = 150;
     this.PUZZLE_PADDING_LEFT = 200;
 
-    this.canvasID = canvasID;
-
     this.top = this.PUZZLE_PADDING_TOP;
     this.left = this.PUZZLE_PADDING_LEFT;
 
@@ -61,7 +60,7 @@ function jigsaw(canvasID, animal, rows, columns) {
     this.slotList = [];
     this.selectedPiece = null;
     
-    this.canvas = document.getElementById(this.canvasID);
+    this.canvas = document.getElementById(canvasID);
     this.ctx = this.canvas.getContext('2d');
 
     var mySelf;
@@ -82,6 +81,12 @@ function jigsaw(canvasID, animal, rows, columns) {
         this.canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
     };
     
+    
+    this.allPieces = function() {
+      return this.TOTAL_ROWS * this.TOTAL_COLUMNS;
+    };
+    
+    
     this.startPuzzle = function() {
         // Clear old pieces
         this.pieceList = [];
@@ -92,7 +97,7 @@ function jigsaw(canvasID, animal, rows, columns) {
     };
 
     this.makeBoardSlotsAndPieces = function() {
-        for (var i = 0; i < this.TOTAL_PIECES; i++) {
+        for (var i = 0; i < this.allPieces(); i++) {
             var piece = this.makePuzzlePiece(i);
             this.pieceList.push(piece);
 
@@ -138,14 +143,15 @@ function jigsaw(canvasID, animal, rows, columns) {
     this.finishGame = function() {
         intel.xdk.player.startAudio("Audio/finish.mp3",false);
 
+        //this.interval = null;
+        this.remove_width = this.BLOCK_WIDTH;
+        this.remove_height = this.BLOCK_HEIGHT;
         this.interval = setInterval(function () { mySelf.endGame(); }, 100);
         // Raise event "eventGameEnded()"
     };
 
 
-    this.interval = null;
-    this.remove_width = this.BLOCK_WIDTH;
-    this.remove_height = this.BLOCK_HEIGHT;
+
 
     this.endGame = function () {
         this.remove_width -= 30;
@@ -298,7 +304,7 @@ function jigsaw(canvasID, animal, rows, columns) {
             }else{
                 randValY=730 - this.BLOCK_HEIGHT;
             }
-        return new puzzleBlock(index, randValX, randValY);
+        return new puzzlePiece(index, randValX, randValY);
     };
 
     // Make a given slot (by its index)
@@ -306,7 +312,7 @@ function jigsaw(canvasID, animal, rows, columns) {
         var x = this.PUZZLE_PADDING_LEFT + (index % this.TOTAL_COLUMNS) * this.BLOCK_WIDTH;
         var y = this.PUZZLE_PADDING_TOP + Math.floor(index / this.TOTAL_COLUMNS) * this.BLOCK_HEIGHT;
 
-        return new puzzleBlock(index, x, y);        
+        return new puzzleSlot(index, x, y);        
     };
     
     // Get the piece given x and y
@@ -329,7 +335,7 @@ function jigsaw(canvasID, animal, rows, columns) {
 
     // Check if all pieces are in the right slot
     this.isFinished = function() {
-        for (var i = 0; i < this.TOTAL_PIECES; i++) {
+        for (var i = 0; i < this.allPieces(); i++) {
             var piece = this.pieceList[i];
             var slot = this.slotList[i];
 
