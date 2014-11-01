@@ -65,11 +65,7 @@ var Jigsaw = function() {
             
             var arrow = document.getElementById("backArrow");
             arrow.onclick = function() { 
-                mySelf.clearCanvas();
-                mySelf.drawBackGround();
-                // Show index
-                document.getElementById("backArrow").style.display = 'none';
-                document.getElementById("indexScreen").style.visibility = 'visible';
+                mySelf.showIndex();
             };
             
             var pig = document.getElementById("indexPig");
@@ -113,6 +109,14 @@ var Jigsaw = function() {
           return this.TOTAL_ROWS * this.TOTAL_COLUMNS;
         };
 
+        this.showIndex = function() {
+            this.clearCanvas();
+            this.drawBackGround();
+            // Show index
+            document.getElementById("backArrow").style.display = 'none';
+            document.getElementById("indexScreen").style.visibility = 'visible';
+        }            
+        
         this.startPuzzle = function() {
             document.getElementById("indexScreen").style.visibility = 'hidden';
             document.getElementById("backArrow").style.display = 'block';
@@ -194,8 +198,9 @@ var Jigsaw = function() {
             } else {
                 clearInterval(this.interval);
 
+                this.showIndex();
                 // Restart game
-                this.startPuzzle(); 
+                //this.startPuzzle(); 
             }
         };
 
