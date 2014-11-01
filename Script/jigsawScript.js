@@ -187,7 +187,7 @@ function jigsaw(canvasID, animal, rows, columns) {
 
         // Raise event "eventGameEnded()"
     };
-/*
+/*  End-anim disabled for now...
     this.interval = null;
     this.remove_width;
     this.remove_height;
@@ -238,15 +238,14 @@ function jigsaw(canvasID, animal, rows, columns) {
         if (mySelf.selectedPiece) {
             var index = mySelf.selectedPiece.no;
             if(mySelf.MODE=="HARD"){
-                var correctSlot = mySelf.slotList[index];
-                var offsetX = Math.abs(mySelf.selectedPiece.x - correctSlot.x);
-                var offsetY = Math.abs(mySelf.selectedPiece.y - correctSlot.y);
 
-                var errorMargin = 30;
-                if (offsetX <errorMargin && offsetY <errorMargin) {
+                var hoverSlot = mySelf.checkIfWeHoverRightSlot();
+
+                if(hoverSlot){
+
                     // Snap
-                    mySelf.pieceList[index].x = correctSlot.x;
-                    mySelf.pieceList[index].y = correctSlot.y;
+                    mySelf.pieceList[index].x = hoverSlot.x;
+                    mySelf.pieceList[index].y = hoverSlot.y;
                 } else {
                     // Save position on drop
                     mySelf.pieceList[index].x = mySelf.selectedPiece.x;
@@ -268,6 +267,20 @@ function jigsaw(canvasID, animal, rows, columns) {
             }
         }
     };
+    
+    this.checkIfWeHoverRightSlot = function() {
+        var pieceNumber = this.selectedPiece.no;
+
+        var correctSlot = this.slotList[pieceNumber];
+
+        var offsetX = Math.abs(this.selectedPiece.x - correctSlot.x);
+        var offsetY = Math.abs(this.selectedPiece.y - correctSlot.y);
+        var errorMargin = 30;
+        if (offsetX <errorMargin && offsetY <errorMargin) {
+            return correctSlot;
+        }
+        return null;
+    };
 
     this.handleOnMouseMove = function(e) {
 
@@ -276,17 +289,19 @@ function jigsaw(canvasID, animal, rows, columns) {
         e.preventDefault();//Stops the default behavior
         
         if (mySelf.selectedPiece) {
-           var pieceNumber = mySelf.selectedPiece.no;
-            var hoverSlot = mySelf.FindSelectedPuzzlePiece(mySelf.slotList, e.pageX, e.pageY);
+            var hoverSlot = mySelf.checkIfWeHoverRightSlot();
+            
+            
             if(hoverSlot){
-                if(pieceNumber==hoverSlot.no && mySelf.MODE=="EASY"){
+                if(mySelf.MODE=="EASY"){
                     // Easy mode and we hover the right slot
                     // Snap
-                    mySelf.pieceList[pieceNumber].x = hoverSlot.x;
+                    var i = mySelf.selectedPiece.no;
+                    mySelf.pieceList[i].x = hoverSlot.x;
                     // Snap
-                    mySelf.pieceList[pieceNumber].y = hoverSlot.y;
+                    mySelf.pieceList[i].y = hoverSlot.y;
                     // Unselect piece
-                      mySelf.pieceList[pieceNumber].isSelected = false;
+                      mySelf.pieceList[i].isSelected = false;
                         mySelf.selectedPiece = null;
                     
                         mySelf.redrawGame();
@@ -352,24 +367,6 @@ function jigsaw(canvasID, animal, rows, columns) {
 
             if ((x >= x1 && x <= x2) && (y >= y1 && y <= y2)) {
                 return new puzzleBlock(imgBlock.no, imgBlock.x, imgBlock.y);
-            }
-        }
-        return null;
-    };
-
-    // Ingen ref til this
-    // Slett denne
-    this.GetImageBlockOnEqual = function(pieceList, slotX, slotY) {
-        alert("checking");
-        for (var i = 0; i < pieceList.length; i++) {
-            var piece = pieceList[i];
-            var pieceX = piece.x;
-            var pieceY = piece.y;
-            if ((slotX == pieceX) && (slotY == pieceY)) {
-                alert("Ja");
-                return new puzzleBlock(piece.no, piece.x, piece.y);
-            }else{
-                alert("Nei: x=" + slotX + " mot " + pieceX);
             }
         }
         return null;
