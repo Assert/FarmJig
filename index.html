@@ -48,28 +48,16 @@
             drawBackground();
             showIndexScreen();
             
-            SelectAnimal('');
+            SelectAnimal();
         }
 
-        function SelectAnimal(animalName){
-           // showGameScreen();
-            //drawBackground();
-            
+        function SelectAnimal(){
             var totalRows = 2;
             var totalColumns = 3;         
             var canvasID = "canJigsaw";
 
-            // ikke ta animal inn i contructor
-            // lag game obj ved init, og send inn
-            // startGame(animal)
-            // clerGame();
-            var game;
-
-            game = new Jigsaw(canvasID, animalName, totalRows, totalColumns);
-
+            var game = new Jigsaw(canvasID, totalRows, totalColumns);
             game.loadGame(); 
-           // game.startPuzzle();
-
         }
         
         function drawBackground() {
@@ -82,18 +70,6 @@
             ctx.drawImage(background_image, 0, 0);
             ctx.restore();
         }
-        /*
-        function goBack() {
-
-            drawBackground();
-            showIndexScreen();
-        }
-        */
-        function showGameScreen() {
-            document.getElementById("backArrow").style.display = 'block';
-            document.getElementById("indexScreen").style.visibility = 'hidden';
-        }
-        
         function showIndexScreen() {
             document.getElementById("backArrow").style.display = 'none';
             document.getElementById("indexScreen").style.visibility = 'visible';

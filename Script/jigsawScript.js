@@ -1,8 +1,6 @@
-
 var Jigsaw = function() {
     
-    
-    var constructor = function Jigsaw(canvasID, animal, rows, columns)
+    var constructor = function Jigsaw(canvasID, rows, columns)
     {
         var privateMethod = function() {};
         this.publicMethod = function() {};
@@ -11,26 +9,11 @@ var Jigsaw = function() {
 
         this.background_image = document.getElementById("backgrond");
         
-        
-         this.puzzlePicture = document.getElementById("pig");
-            this.puzzlePictureShadow = document.getElementById("pigShadow");
-/*
-        if(animal=="pig"){
-            this.puzzlePicture = document.getElementById("pig");
-            this.puzzlePictureShadow = document.getElementById("pigShadow");
-        }else if(animal=="sheep"){
-            this.puzzlePicture = document.getElementById("sheep");
-            this.puzzlePictureShadow = document.getElementById("sheepShadow");
-        }else if(animal=="duck"){
-            this.puzzlePicture = document.getElementById("duck");
-            this.puzzlePictureShadow = document.getElementById("duckShadow");
-        }else if(animal=="donkey"){
-            this.puzzlePicture = document.getElementById("donkey");
-            this.puzzlePictureShadow = document.getElementById("donkeyShadow");
-        }else{
-          //  alert("Dev-exception: Error in animal string (jigsawScript.js)");            
-        }
-*/
+        // todo : I need the size of the pieces.. they are all the same so I just use mr. Pig
+        // fix this some time
+        this.puzzlePicture = document.getElementById("pig");
+        this.puzzlePictureShadow = document.getElementById("pigShadow");
+
         // Org size of image
         this.ORG_PUZZLE_WIDTH = this.puzzlePicture.naturalWidth -1;
         this.ORG_PUZZLE_HEIGHT = this.puzzlePicture.naturalHeight -1;
@@ -43,8 +26,6 @@ var Jigsaw = function() {
         // Grid to
         this.TOTAL_ROWS = rows;
         this.TOTAL_COLUMNS = columns; 
-
-
 
         // Size of the pieces
         this.PIECES_WIDTH = Math.round(this.ORG_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
@@ -93,9 +74,6 @@ var Jigsaw = function() {
             
             var pig = document.getElementById("indexPig");
             pig.onclick = function() { 
-                document.getElementById("backArrow").style.display = 'none';
-                document.getElementById("indexScreen").style.visibility = 'hidden';
-
                 mySelf.puzzlePicture = document.getElementById("pig");
                 mySelf.puzzlePictureShadow = document.getElementById("pigShadow");
                 mySelf.startPuzzle();
@@ -103,9 +81,6 @@ var Jigsaw = function() {
 
             var sheep = document.getElementById("indexSheep");
             sheep.onclick = function() { 
-                document.getElementById("backArrow").style.display = 'none';
-                document.getElementById("indexScreen").style.visibility = 'hidden';
-
                 mySelf.puzzlePicture = document.getElementById("sheep");
                 mySelf.puzzlePictureShadow = document.getElementById("sheepShadow");
                 mySelf.startPuzzle();
@@ -113,9 +88,6 @@ var Jigsaw = function() {
 
             var duck = document.getElementById("indexDuck");
             duck.onclick = function() { 
-                document.getElementById("backArrow").style.display = 'none';
-                document.getElementById("indexScreen").style.visibility = 'hidden';
-
                 mySelf.puzzlePicture = document.getElementById("duck");
                 mySelf.puzzlePictureShadow = document.getElementById("duckShadow");
                 mySelf.startPuzzle();
@@ -123,19 +95,10 @@ var Jigsaw = function() {
 
             var donkey = document.getElementById("indexDonkey");
             donkey.onclick = function() { 
-                document.getElementById("backArrow").style.display = 'none';
-                document.getElementById("indexScreen").style.visibility = 'hidden';
-
                 mySelf.puzzlePicture = document.getElementById("donkey");
                 mySelf.puzzlePictureShadow = document.getElementById("donkeyShadow");
                 mySelf.startPuzzle();
             };   
-
-            
-            //document.getElementById("indexScreen").style.visibility = 'visible';
-
-            
-            
             
             this.canvas.onmousedown = this.handleOnMouseDown;
             this.canvas.onmouseup = this.handleOnMouseUp;
@@ -146,14 +109,13 @@ var Jigsaw = function() {
             this.canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
         };
 
-
         this.allPieces = function() {
           return this.TOTAL_ROWS * this.TOTAL_COLUMNS;
         };
 
-
         this.startPuzzle = function() {
-                        document.getElementById("backArrow").style.display = 'block';
+            document.getElementById("indexScreen").style.visibility = 'hidden';
+            document.getElementById("backArrow").style.display = 'block';
 
             // Clear old pieces
             this.pieceList = [];
@@ -172,7 +134,6 @@ var Jigsaw = function() {
                 this.slotList.push(slot);
             }
         };
-
 
         // Game is redrawn on every movement
         // If we could XOR the moved piece that would be faster.
@@ -204,9 +165,6 @@ var Jigsaw = function() {
             }
         };
 
-
-
-
         this.finishGame = function() {
             intel.xdk.player.startAudio("Audio/finish.mp3",false);
 
@@ -216,8 +174,6 @@ var Jigsaw = function() {
             this.interval = setInterval(function () { mySelf.endGame(); }, 100);
             // Raise event "eventGameEnded()"
         };
-
-
 
         // todo: this is hard coded pixel size.. 10,20 and 30
         this.endGame = function () {
@@ -467,7 +423,6 @@ var Jigsaw = function() {
         this.drawBackGround = function() {
             this.ctx.drawImage(this.background_image, 0, 0);  
         };         
-        
         
     };
     
