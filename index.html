@@ -88,11 +88,6 @@
             ctx.restore();
         }
         function goBack() {
-            // Siden disse er globale må de resettes her.. ikke bra
-            imageBlockList = []; // Dette er brikker (index, x,y og isSelected)
-            blockList = [];  // Dette er slots
-            selectedBlock = null;
-  
             drawBackground();
             showIndexScreen();
         }

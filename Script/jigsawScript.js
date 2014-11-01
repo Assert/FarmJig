@@ -54,9 +54,9 @@ function jigsaw(canvasID, animal, rows, columns) {
     this.top = this.PUZZLE_PADDING_TOP;
     this.left = this.PUZZLE_PADDING_LEFT;
 
-    var imageBlockList = []; // Dette er brikker (index, x,y og isSelected)
-    var blockList = [];  // Dette er slots
-    var selectedBlock = null;
+    this.pieceList = []; // Dette er brikker (index, x,y og isSelected)
+    this.slotList = [];  // Dette er slots
+    this.selectedPiece = null;
     
     this.canvas = document.getElementById(this.canvasID);
     this.ctx = this.canvas.getContext('2d');
@@ -83,15 +83,15 @@ function jigsaw(canvasID, animal, rows, columns) {
     };
 
     this.devideBoardIntoPieces = function() {
-        imageBlockList = [];
-        blockList = [];
+        this.pieceList = [];
+        this.slotList = [];
  
         for (var i = 0; i < this.TOTAL_PIECES; i++) {       
             var imgBlock = this.makePuzzlePiece(i);
-            imageBlockList.push(imgBlock);
+            this.pieceList.push(imgBlock);
 
             var block = this.makeBoardBlock(i);
-            blockList.push(block);
+            this.slotList.push(block);
         }
     };
     
@@ -103,9 +103,9 @@ function jigsaw(canvasID, animal, rows, columns) {
         mySelf.drawLines();
         mySelf.drawNonSelectedPieces();
 
-        if (selectedBlock) {
+        if (this.selectedPiece) {
             // Draw selected block while it is moving
-            mySelf.drawImageBlock(selectedBlock);
+            mySelf.drawImageBlock(this.selectedPiece);
         }
     };
 
@@ -139,8 +139,8 @@ function jigsaw(canvasID, animal, rows, columns) {
     };
 
     this.drawNonSelectedPieces = function() {
-        for (var i = 0; i < imageBlockList.length; i++) {
-            var imgBlock = imageBlockList[i];
+        for (var i = 0; i < this.pieceList.length; i++) {
+            var imgBlock = this.pieceList[i];
             if (imgBlock.isSelected === false) {
                 this.drawImageBlock(imgBlock);
             }
@@ -186,8 +186,8 @@ function jigsaw(canvasID, animal, rows, columns) {
         if (remove_width > 0 && remove_height > 0) {
 
             mySelf.clear(this.ctx);
-            for (var i = 0; i < imageBlockList.length; i++) {
-                var imgBlock = imageBlockList[i];
+            for (var i = 0; i < this.pieceList.length; i++) {
+                var imgBlock = this.pieceList[i];
 
                 imgBlock.x += 10;
                 imgBlock.y += 10;
@@ -212,45 +212,45 @@ function jigsaw(canvasID, animal, rows, columns) {
     this.handleOnMouseDown = function(e) {
         e.preventDefault();//Stops the default behavior
         // remove old selected
-        if (selectedBlock !== null) {
-            imageBlockList[selectedBlock.no].isSelected = false;
+        if (mySelf.selectedPiece !== null) {
+            mySelf.pieceList[mySelf.selectedPiece.no].isSelected = false;
         }
 
-        selectedBlock = mySelf.FindSelectedPuzzlePiece(imageBlockList, e.pageX, e.pageY);
+        mySelf.selectedPiece = mySelf.FindSelectedPuzzlePiece(mySelf.pieceList, e.pageX, e.pageY);
         
-        if (selectedBlock) {
-            imageBlockList[selectedBlock.no].isSelected = true;
-                  this.offsetX = e.pageX - selectedBlock.x;
-                  this.offsetY = e.pageY - selectedBlock.y;
+        if (mySelf.selectedPiece) {
+            mySelf.pieceList[mySelf.selectedPiece.no].isSelected = true;
+                  this.offsetX = e.pageX - mySelf.selectedPiece.x;
+                  this.offsetY = e.pageY - mySelf.selectedPiece.y;
         }
     };
 
     this.handleOnMouseUp = function(e) {  
         //In hard mode blocks will snapp to any slot, in easy they will not
-        if (selectedBlock) {
-            var index = selectedBlock.no;
+        if (mySelf.selectedPiece) {
+            var index = mySelf.selectedPiece.no;
       
             if(this.MODE=="HARD"){
                 //Trenger jeg dette i HARD MODE?
-                var block = mySelf.FindSelectedPuzzlePiece(blockList, selectedBlock.x, selectedBlock.y);
+                var block = mySelf.FindSelectedPuzzlePiece(this.slotList, mySelf.selectedPiece.x, mySelf.selectedPiece.y);
                 if (block) {
-                    var blockOldImage = mySelf.GetImageBlockOnEqual(imageBlockList, block.x, block.y);
+                    var blockOldImage = mySelf.GetImageBlockOnEqual(mySelf.pieceList, block.x, block.y);
                     if (blockOldImage === null) {
-                        imageBlockList[index].x = block.x;
-                        imageBlockList[index].y = block.y;
+                        mySelf.pieceList[index].x = block.x;
+                        mySelf.pieceList[index].y = block.y;
                     }
                 }
                 else {
-                    imageBlockList[index].x = selectedBlock.x;
-                    imageBlockList[index].y = selectedBlock.y;
+                    mySelf.pieceList[index].x = mySelf.selectedPiece.x;
+                    mySelf.pieceList[index].y = mySelf.selectedPiece.y;
                 }
             }else{
-                imageBlockList[index].x = selectedBlock.x;
-                imageBlockList[index].y = selectedBlock.y;        
+                mySelf.pieceList[index].x = mySelf.selectedPiece.x;
+                mySelf.pieceList[index].y = mySelf.selectedPiece.y;        
             }
         
-            imageBlockList[index].isSelected = false;
-            selectedBlock = null;
+            mySelf.pieceList[index].isSelected = false;
+            mySelf.selectedPiece = null;
             mySelf.redrawGame();
 
             if (mySelf.isFinished()) {
@@ -264,30 +264,30 @@ function jigsaw(canvasID, animal, rows, columns) {
         // Denne fyrer hele tiden..
         
         e.preventDefault();//Stops the default behavior
-        if (selectedBlock) {
-           var index = selectedBlock.no;
-            var block = mySelf.FindSelectedPuzzlePiece(blockList, e.pageX, e.pageY);
+        if (mySelf.selectedPiece) {
+           var index = mySelf.selectedPiece.no;
+            var block = mySelf.FindSelectedPuzzlePiece(mySelf.slotList, e.pageX, e.pageY);
             if(block){
                 if(index==block.no && this.MODE!="HARD"){
-                    imageBlockList[index].x = block.x;
-                    imageBlockList[index].y = block.y;
+                    mySelf.pieceList[index].x = block.x;
+                    mySelf.pieceList[index].y = block.y;
 
-                      imageBlockList[index].isSelected = false;
-                        selectedBlock = null;
+                      mySelf.pieceList[index].isSelected = false;
+                        mySelf.selectedPiece = null;
                         mySelf.redrawGame();
                          if (mySelf.isFinished()) {
                              mySelf.OnFinished();
                        }
                 }else{
                     //Move
-                    selectedBlock.x = e.pageX - this.offsetX;
-                    selectedBlock.y = e.pageY - this.offsetY;
+                    mySelf.selectedPiece.x = e.pageX - this.offsetX;
+                    mySelf.selectedPiece.y = e.pageY - this.offsetY;
                     mySelf.redrawGame();         
                 }
             }else{
                 //Move
-                selectedBlock.x = e.pageX - this.offsetX;
-                selectedBlock.y = e.pageY - this.offsetY;
+                mySelf.selectedPiece.x = e.pageX - this.offsetX;
+                mySelf.selectedPiece.y = e.pageY - this.offsetY;
 
                 mySelf.redrawGame();                
             }
@@ -357,8 +357,8 @@ function jigsaw(canvasID, animal, rows, columns) {
     this.isFinished = function() {
         var total = this.TOTAL_PIECES;
         for (var i = 0; i < total; i++) {
-            var img = imageBlockList[i];
-            var block = blockList[i];
+            var img = this.pieceList[i];
+            var block = this.slotList[i];
 
             if ((img.x != block.x) || (img.y != block.y)) {
                 // If one img is not equal to its block you are not finished
