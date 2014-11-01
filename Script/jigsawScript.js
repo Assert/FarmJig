@@ -1,7 +1,7 @@
 
 function jigsaw(canvasID, animal, rows, columns) {
     
-    this.MODE = "EASY"; //HARD
+    this.MODE = "HARD"; //HARD and EASY
 
     this.background_image = document.getElementById("backgrond");
 
@@ -21,6 +21,17 @@ function jigsaw(canvasID, animal, rows, columns) {
         alert("Dev-exception: Error in animal string (jigsawScript.js)");            
     }
 
+    
+    
+    
+    
+    
+    // Fix hard mode
+    
+    
+    
+    
+    
     // Org size of image
     this.ORG_PUZZLE_WIDTH = this.puzzlePicture.naturalWidth -1;
     this.ORG_PUZZLE_HEIGHT = this.puzzlePicture.naturalHeight -1;
@@ -43,8 +54,8 @@ function jigsaw(canvasID, animal, rows, columns) {
     
     // Selected piece offset from mouse point
     // Ikke sikker på hva denne gjør lenger
-    this.offsetX = 200;
-    this.offsetY = 200;
+    this.offsetX = 0;
+    this.offsetY = 0;
 
     // Set jugsaw to middle
     this.PUZZLE_PADDING_TOP = 150;
@@ -63,10 +74,14 @@ function jigsaw(canvasID, animal, rows, columns) {
     this.ctx = this.canvas.getContext('2d');
 
     var mySelf;
-    this.initDrawing = function () {
+    this.loadGame = function () {
         mySelf = this; // eventene har annet "this" og må bruke denne
 
-        // register events
+        this.registerTouchEvents();
+        this.startPuzzle();
+    };
+    
+    this.registerTouchEvents = function() {
         this.canvas.onmousedown = this.handleOnMouseDown;
         this.canvas.onmouseup = this.handleOnMouseUp;
         this.canvas.onmousemove = this.handleOnMouseMove;
@@ -74,11 +89,10 @@ function jigsaw(canvasID, animal, rows, columns) {
         this.canvas.addEventListener("touchstart", this.handleOnMouseDown, false);
         this.canvas.addEventListener("touchend", this.handleOnMouseUp, false);
         this.canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
-   
-        this.initializeNewGame();
     };
     
-    this.initializeNewGame = function() {
+    this.startPuzzle = function() {
+        // Clear old pieces
         this.pieceList = [];
         this.slotList = [];
         
@@ -87,8 +101,6 @@ function jigsaw(canvasID, animal, rows, columns) {
     };
 
     this.devideBoardIntoPieces = function() {
-        
- 
         for (var i = 0; i < this.TOTAL_PIECES; i++) {       
             var imgBlock = this.makePuzzlePiece(i);
             this.pieceList.push(imgBlock);
@@ -102,17 +114,17 @@ function jigsaw(canvasID, animal, rows, columns) {
     // Game is redrawn on every movement
     // If we could XOR the moved piece that would be faster.
     this.redrawGame = function() {
-        mySelf.clearCanvas();
-        mySelf.drawLines();
-        mySelf.drawNonSelectedPieces();
+        this.clearCanvas();
+        this.drawBoard();
+        this.drawNonSelectedPieces();
 
         if (this.selectedPiece) {
             // Draw selected block while it is moving
-            mySelf.drawImageBlock(this.selectedPiece);
+            this.drawPiece(this.selectedPiece);
         }
     };
 
-    this.drawLines = function() {
+    this.drawBoard = function() {
         // Draw background image
         this.ctx.drawImage(this.background_image, 0, 0);
 
@@ -145,53 +157,55 @@ function jigsaw(canvasID, animal, rows, columns) {
         for (var i = 0; i < this.pieceList.length; i++) {
             var imgBlock = this.pieceList[i];
             if (imgBlock.isSelected === false) {
-                this.drawImageBlock(imgBlock);
+                this.drawPiece(imgBlock);
             }
         }
     };
 
-    this.drawImageBlock = function(imgBlock) {
-        this.drawFinalImage(imgBlock.no, imgBlock.x, imgBlock.y, this.BLOCK_WIDTH, this.BLOCK_HEIGHT);
+    this.drawPiece = function(piece) {
+        this.drawSection(piece.no, piece.x, piece.y, this.BLOCK_WIDTH, this.BLOCK_HEIGHT);
     };
 
-    this.drawFinalImage = function(index, destX, destY, destWidth, destHeight) {
+    this.drawSection = function(pieceNumber, destX, destY, destWidth, destHeight) {
         this.ctx.save();
-        var srcX = (index % this.TOTAL_COLUMNS) * this.PIECES_WIDTH;
-        var srcY = Math.floor(index / this.TOTAL_COLUMNS) * this.PIECES_HEIGHT;
+        var srcX = (pieceNumber % this.TOTAL_COLUMNS) * this.PIECES_WIDTH;
+        var srcY = Math.floor(pieceNumber / this.TOTAL_COLUMNS) * this.PIECES_HEIGHT;
         this.ctx.drawImage(this.puzzlePicture, srcX, srcY, this.PIECES_WIDTH, this.PIECES_HEIGHT, destX, destY, destWidth, destHeight);
         this.ctx.restore();
     };
 
-    var interval = null;
-    var remove_width;
-    var remove_height;
-    
+       
     this.OnFinished = function() {
 
         intel.xdk.player.startAudio("Audio/finish.mp3",false);
         
-        remove_width = this.BLOCK_WIDTH;
-        remove_height = this.BLOCK_HEIGHT;
+       // this.remove_width = this.BLOCK_WIDTH;
+    //    this.remove_height = this.BLOCK_HEIGHT;
 
-        interval = setInterval(function () { mySelf.endGame(); }, 100);
-        
+       // this.interval = setInterval(function () { mySelf.endGame(); }, 100);
+                    this.startPuzzle(); 
+
         // Raise event "eventGameEnded()"
     };
+/*
+    this.interval = null;
+    this.remove_width;
+    this.remove_height;
 
     this.endGame = function () {
-        remove_width -= 30;
-        remove_height -= 20;
+        this.remove_width -= 30;
+        this.remove_height -= 20;
 
-        if (remove_width > 0 && remove_height > 0) {
+        if (this.remove_width > 0 && this.remove_height > 0) {
 
-            mySelf.clearCanvas();
+            this.clearCanvas();
             for (var i = 0; i < this.pieceList.length; i++) {
                 var imgBlock = this.pieceList[i];
 
                 imgBlock.x += 10;
                 imgBlock.y += 10;
 
-                mySelf.drawFinalImage(imgBlock.no, imgBlock.x, imgBlock.y, remove_width, remove_height);
+                this.drawSection(imgBlock.no, imgBlock.x, imgBlock.y, this.remove_width, this.remove_height);
             }
 
         } else {
@@ -199,10 +213,10 @@ function jigsaw(canvasID, animal, rows, columns) {
             clearInterval(interval);
            
             // Restart game
-            this.initializeNewGame(); 
+            this.startPuzzle(); 
         }
     };
-
+*/
     this.handleOnMouseDown = function(e) {
         e.preventDefault();//Stops the default behavior
         // remove old selected
@@ -225,7 +239,7 @@ function jigsaw(canvasID, animal, rows, columns) {
             var index = mySelf.selectedPiece.no;
       
             if(this.MODE=="HARD"){
-                //Trenger jeg dette i HARD MODE?
+
                 var block = mySelf.FindSelectedPuzzlePiece(mySelf.slotList, mySelf.selectedPiece.x, mySelf.selectedPiece.y);
                 if (block) {
                     var blockOldImage = mySelf.GetImageBlockOnEqual(mySelf.pieceList, block.x, block.y);
@@ -258,27 +272,36 @@ function jigsaw(canvasID, animal, rows, columns) {
         // Denne fyrer hele tiden..
         
         e.preventDefault();//Stops the default behavior
+        
         if (mySelf.selectedPiece) {
-           var index = mySelf.selectedPiece.no;
-            var block = mySelf.FindSelectedPuzzlePiece(mySelf.slotList, e.pageX, e.pageY);
-            if(block){
-                if(index==block.no && mySelf.MODE!="HARD"){
-                    mySelf.pieceList[index].x = block.x;
-                    mySelf.pieceList[index].y = block.y;
-
-                      mySelf.pieceList[index].isSelected = false;
+           var pieceNumber = mySelf.selectedPiece.no;
+            var hoverSlot = mySelf.FindSelectedPuzzlePiece(mySelf.slotList, e.pageX, e.pageY);
+            if(hoverSlot){
+                if(pieceNumber==hoverSlot.no && mySelf.MODE=="EASY"){
+                    // Easy mode and we hover the right slot
+                    // Snap
+                    mySelf.pieceList[pieceNumber].x = hoverSlot.x;
+                    // Snap
+                    mySelf.pieceList[pieceNumber].y = hoverSlot.y;
+                    // Unselect piece
+                      mySelf.pieceList[pieceNumber].isSelected = false;
                         mySelf.selectedPiece = null;
+                    
                         mySelf.redrawGame();
+                    
+                    // Player can be finnished as he does not need to let go of piece
                          if (mySelf.isFinished()) {
                              mySelf.OnFinished();
                        }
                 }else{
+                    // Wrong slot or on HARD mode
                     //Move
                     mySelf.selectedPiece.x = e.pageX - mySelf.offsetX;
                     mySelf.selectedPiece.y = e.pageY - mySelf.offsetY;
                     mySelf.redrawGame();         
                 }
             }else{
+                // Not hovering any slot
                 //Move
                 mySelf.selectedPiece.x = e.pageX - mySelf.offsetX;
                 mySelf.selectedPiece.y = e.pageY - mySelf.offsetY;
