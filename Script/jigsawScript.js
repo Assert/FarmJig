@@ -25,6 +25,7 @@ var Jigsaw = function() {
         this.PUZZLE_PIECE_WIDTH = Math.round(this.PUZZLE_BOARD_WIDTH / this.TOTAL_COLUMNS);
         this.PUZZLE_PIECE_HEIGHT = Math.round(this.PUZZLE_BOARD_HEIGHT / this.TOTAL_ROWS);
 
+        
         var mySelf;
         this.loadGame = function () {
             mySelf = this; // eventene har annet "this" og må bruke denne
@@ -109,6 +110,8 @@ var Jigsaw = function() {
         };
 
         this.showIndex = function() {
+            this.arr = this.findPosibleStartSlots();
+
             this.clearCanvas();
             this.drawBackGround();
 
@@ -343,20 +346,77 @@ var Jigsaw = function() {
         // todo: her kan vi velge noen "gode" plasser utenfor brettet og sette brikkene der før spillet (random)
         // Give pieces a random x and y start position (by index)
         this.makePuzzlePiece = function(index) {
-                var randValX = (Math.random() * this.ctx.canvas.width);
-                if (randValX>(this.ctx.canvas.width-this.PUZZLE_PIECE_WIDTH)) randValX=this.ctx.canvas.width-this.PUZZLE_PIECE_WIDTH;
+            
+            var tt = this.arr[index];
+            
+            var randValX = tt[0];
+            var randValY = tt[1];
+            
 
-                randValX = Math.round(randValX);
-
-                var randValY;
-                 if (yesNo()){
-                    randValY=this.ctx.canvas.height / 70;
-                }else{
-                    randValY=this.ctx.canvas.height - this.PUZZLE_PIECE_HEIGHT;
-                }
             return new puzzlePiece(index, randValX, randValY);
         };
 
+        this.shuffle = function(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex ;
+
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
+
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+
+            return array;
+        };
+        
+        this.findPosibleStartSlots = function() {
+            var arr = [];
+
+            var marginY = this.PUZZLE_PADDING_TOP / 4; // Margin for random movement 25% of the outside
+            var marginX = this.PUZZLE_PADDING_LEFT / 4;
+
+            var slotsX = this.TOTAL_COLUMNS + 2; // +2  for each side
+            var slotsY = this.TOTAL_ROWS;
+            
+            var slotWidth = this.ctx.canvas.width / slotsX;
+            
+            for(var i=0; i<slotsX; i++) {
+                var x1 = i * slotWidth + Math.random() * marginX;
+                var y1 = Math.round(Math.random() * marginY);
+                arr.push([x1, y1]);
+
+                var x2 = i * slotWidth + Math.random() * marginX;
+                var y2 = Math.round(this.PUZZLE_BOARD_HEIGHT + this.PUZZLE_PADDING_TOP + (Math.random() * marginY));
+                arr.push([x1, y2]);
+            }
+
+            for(var j=0; j<slotsY; j++) {
+                var x1 = Math.random() * marginX;
+                var y1 = this.PUZZLE_PADDING_TOP + (j * this.PUZZLE_PIECE_HEIGHT);
+                arr.push([x1, y1]);
+                
+                var x2 = this.PUZZLE_BOARD_WIDTH + this.PUZZLE_PADDING_LEFT + Math.random() * marginX;
+                var y2 = this.PUZZLE_PADDING_TOP + (j * this.PUZZLE_PIECE_HEIGHT);
+                arr.push([x2, y2]);
+            }      
+            
+            arr = this.shuffle(arr);
+            
+            var numberOfPieces = this.numberOfPieces();
+            var numberOfStartSlots = arr.length;
+            var numberToRemove = numberOfStartSlots - numberOfPieces;
+            arr.splice(numberOfPieces, numberToRemove);
+
+            return arr;
+        };
+        
+        
         // Make a given slot (by its index)
         this.makeBoardSlot = function(index) {
             var x = this.PUZZLE_PADDING_LEFT + (index % this.TOTAL_COLUMNS) * this.PUZZLE_PIECE_WIDTH;
