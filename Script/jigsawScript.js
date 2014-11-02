@@ -3,7 +3,6 @@ var Jigsaw = function() {
     var constructor = function Jigsaw(canvasID, rows, columns, mode)
     {
         this.MODE = mode;
-
         this.TOTAL_ROWS = rows;
         this.TOTAL_COLUMNS = columns; 
 
@@ -11,12 +10,10 @@ var Jigsaw = function() {
         
         this.canvas = document.getElementById(canvasID);
         this.ctx = this.canvas.getContext('2d');
-
-        this.selectedPiece = null;
-
         this.ctx.canvas.width  = window.innerWidth;
         this.ctx.canvas.height = window.innerHeight;
-        
+
+        this.selectedPiece = null;
 
         this.PUZZLE_BOARD_WIDTH = this.ctx.canvas.width / 2; // 50% of the screen
         this.PUZZLE_BOARD_HEIGHT = this.ctx.canvas.height / 2;
@@ -90,6 +87,11 @@ var Jigsaw = function() {
             this.clearCanvas();
             this.drawBackGround();
 
+            var arrow = document.getElementById("backArrow");
+            arrow.style.top = this.calcHeightFromReference(10); 
+            arrow.style.left = this.calcWidthFromReference(10); 
+            arrow.style.width = this.calcWidthFromReference(60); 
+            
             // Scale and place index animals
             var pig = document.getElementById("indexPig");
             pig.style.top = this.calcHeightFromReference(300); 

@@ -1,7 +1,6 @@
 html, body{
     background-color: Black;
     overflow: hidden;
-
 }
 body,canvas {
     margin: 0 0 0 0;
@@ -9,10 +8,4 @@ body,canvas {
 }
 canvas{
     background-color: White;
-}
-img#backArrow{
-    position:absolute;
-    left:10px;
-    top:10px;
-    width:60px;
 }
