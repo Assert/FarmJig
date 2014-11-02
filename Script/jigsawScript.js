@@ -42,36 +42,25 @@ var Jigsaw = function() {
                 mySelf.showIndex();
             };
             
-            // Dette kan forekles mye nå, siden alle er like.. men!
-            // det er en feil her som gjør at click ikke fyrer på iOS
-            
             var pig = document.getElementById("indexPig");
-            pig.onclick = this.loadPuzzle;
-            pig.addEventListener("click", this.loadPuzzle, false);
             pig.onmousedown = this.moveIn;
             pig.onmouseup = this.moveOut;
             pig.addEventListener("touchstart", this.moveIn, false);
             pig.addEventListener("touchend", this.moveOut, false);
             
             var sheep = document.getElementById("indexSheep");
-            sheep.onclick = this.loadPuzzle;
-            sheep.addEventListener("click", this.loadPuzzle, false);
             sheep.onmousedown = this.moveIn;
             sheep.onmouseup = this.moveOut;
             sheep.addEventListener("touchstart", this.moveIn, false);
             sheep.addEventListener("touchend", this.moveOut, false);
 
             var duck = document.getElementById("indexDuck");
-            duck.onclick = this.loadPuzzle;
-            duck.addEventListener("click", this.loadPuzzle, false);
             duck.onmousedown = this.moveIn;
             duck.onmouseup = this.moveOut;
             duck.addEventListener("touchstart", this.moveIn, false);
             duck.addEventListener("touchend", this.moveOut, false);
 
             var donkey = document.getElementById("indexDonkey");
-            donkey.onclick = this.loadPuzzle;
-            donkey.addEventListener("click", this.loadPuzzle, false);
             donkey.onmousedown = this.moveIn;
             donkey.onmouseup = this.moveOut;
             donkey.addEventListener("touchstart", this.moveIn, false);
@@ -95,11 +84,6 @@ var Jigsaw = function() {
             this.canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
         };
 
-        this.loadPuzzle = function() { 
-                mySelf.puzzlePicture = this;
-                mySelf.startPuzzle();
-        };           
-        
          this.moveIn = function(e) {
                 e.preventDefault();//Stops the default behavior
                 this.style.top = mySelf.move(this.style.top, 5);
@@ -110,9 +94,8 @@ var Jigsaw = function() {
 
          this.moveOut = function(e) {
                 e.preventDefault();//Stops the default behavior
-                this.style.top = mySelf.move(this.style.top, -5);
-                this.style.left = mySelf.move(this.style.left, -5);
-                this.style.width = mySelf.move(this.style.width, 20);
+                mySelf.puzzlePicture = this;
+                mySelf.startPuzzle();             
         };
         
         this.move = function(sizeInPx, step) {
