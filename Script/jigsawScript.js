@@ -44,28 +44,28 @@ var Jigsaw = function() {
             
             var pig = document.getElementById("indexPig");
             pig.onclick = function() { 
-                mySelf.puzzlePicture = document.getElementById("pig");
+                mySelf.puzzlePicture = document.getElementById("indexPig");
                 mySelf.puzzlePictureShadow = document.getElementById("pigShadow");
                 mySelf.startPuzzle();
             };     
 
             var sheep = document.getElementById("indexSheep");
             sheep.onclick = function() { 
-                mySelf.puzzlePicture = document.getElementById("sheep");
+                mySelf.puzzlePicture = document.getElementById("indexSheep");
                 mySelf.puzzlePictureShadow = document.getElementById("sheepShadow");
                 mySelf.startPuzzle();
             };   
 
             var duck = document.getElementById("indexDuck");
             duck.onclick = function() { 
-                mySelf.puzzlePicture = document.getElementById("duck");
+                mySelf.puzzlePicture = document.getElementById("indexDuck");
                 mySelf.puzzlePictureShadow = document.getElementById("duckShadow");
                 mySelf.startPuzzle();
             };   
 
             var donkey = document.getElementById("indexDonkey");
             donkey.onclick = function() { 
-                mySelf.puzzlePicture = document.getElementById("donkey");
+                mySelf.puzzlePicture = document.getElementById("indexDonkey");
                 mySelf.puzzlePictureShadow = document.getElementById("donkeyShadow");
                 mySelf.startPuzzle();
             };   
