@@ -25,7 +25,6 @@ var Jigsaw = function() {
         this.PUZZLE_PIECE_WIDTH = Math.round(this.PUZZLE_BOARD_WIDTH / this.TOTAL_COLUMNS);
         this.PUZZLE_PIECE_HEIGHT = Math.round(this.PUZZLE_BOARD_HEIGHT / this.TOTAL_ROWS);
 
-        
         var mySelf;
         this.loadGame = function () {
             mySelf = this; // eventene har annet "this" og må bruke denne
@@ -54,14 +53,6 @@ var Jigsaw = function() {
             
             var donkey = document.getElementById("indexDonkey");
             this.addEventsToIndexSelector(donkey);
-
-            /* Denne flytter pilen så mye at mouse-up eventet ikke fyrer :)
-            arrow.onmousedown = this.moveIn;
-            arrow.onmouseup = this.moveOut;
-            arrow.addEventListener("touchstart", this.moveIn, false);
-            arrow.addEventListener("touchend", this.moveOut, false);
-
-            */ 
             
             this.canvas.onmousedown = this.handleOnMouseDown;
             this.canvas.onmouseup = this.handleOnMouseUp;
@@ -85,7 +76,6 @@ var Jigsaw = function() {
                 this.style.top = mySelf.move(this.style.top, 5);
                 this.style.left = mySelf.move(this.style.left, 5);
                 this.style.width = mySelf.move(this.style.width, -20);
-             
         };
 
          this.moveOut = function(e) {
