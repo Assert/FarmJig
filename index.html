@@ -13,23 +13,22 @@
     <canvas id="canJigsaw" width="1" height="1"></canvas>
     
     <div id="indexScreen">
-<!--    <img id="indexPig" src="Images/Pig.png" width="300" style="position:absolute; top:430px; left:10px;" /> -->
     <img id="indexPig" src="Images/Pig.png" width="1" style="position:absolute;"  />
     <img id="indexSheep" src="Images/Sheep.png" width="1" style="position:absolute;" />
     <img id="indexDuck" src="Images/Duck.png" width="1" style="position:absolute;" />
     <img id="indexDonkey" src="Images/Donkey.png" width="1" style="position:absolute;" />
     </div>
     
-    <img id="sheep" width="1" height="1" src="Images/Sheep.png"></img>
-    <img id="sheepShadow" width="1" height="1" src="Images/SheepShadow.png"></img>
-    <img id="pig" width="1" height="1" src="Images/Pig.png"></img>
-    <img id="pigShadow" width="1" height="1" src="Images/PigShadow.png"></img>
-    <img id="duck" width="1" height="1" src="Images/Duck.png"></img>
-    <img id="duckShadow" width="1" height="1" src="Images/DuckShadow.png"></img>
-    <img id="donkey" width="1" height="1" src="Images/Donkey.png"></img>
-    <img id="donkeyShadow" width="1" height="1" src="Images/DonkeyShadow.png"></img>
+    <img id="sheep" width="0" height="0" src="Images/Sheep.png"></img>
+    <img id="sheepShadow" width="0" height="0" src="Images/SheepShadow.png"></img>
+    <img id="pig" width="0" height="0" src="Images/Pig.png"></img>
+    <img id="pigShadow" width="0" height="0" src="Images/PigShadow.png"></img>
+    <img id="duck" width="0" height="0" src="Images/Duck.png"></img>
+    <img id="duckShadow" width="0" height="0" src="Images/DuckShadow.png"></img>
+    <img id="donkey" width="0" height="0" src="Images/Donkey.png"></img>
+    <img id="donkeyShadow" width="0" height="0" src="Images/DonkeyShadow.png"></img>
     
-    <img id="backgrond" width="1" height="1" src="Images/Landscape.png"></img>
+    <img id="backgrond" width="0" height="0" src="Images/Landscape.png"></img>
 </body>
 </html>
 
@@ -37,10 +36,14 @@
         document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);               
 
         function onDeviceReady(){
+            intel.xdk.device.hideSplashScreen();   
+
             // Preload the mp3
             intel.xdk.player.loadSound("Audio/finish.mp3");
-            intel.xdk.device.setRotateOrientation('landscape');
-            intel.xdk.device.hideSplashScreen();   
+            
+            // Dette virker ikke på min iPhone
+            intel.xdk.device.setRotateOrientation("landscape");        // portrait  
+            intel.xdk.device.setAutoRotate(false);
 
             var totalRows = 2;
             var totalColumns = 3;         

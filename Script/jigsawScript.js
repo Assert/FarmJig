@@ -427,7 +427,7 @@ var Jigsaw = function() {
 
         
         //todo: some vars render the globals useless now
-        // and some consts 3 and 2 are hard-coe to a grid og 3x2
+        // and some consts 6,4,3 and 2 are hard-coe to a grid og 3x2
         this.drawSection = function(piece, pieceWidthOnScreen, pieceHeightOnScreen) {
             this.ctx.save();
             
@@ -446,6 +446,7 @@ var Jigsaw = function() {
             this.ctx.restore();
         };
 
+        // hard-coded that the preview will take 50% of the screen
         this.drawPreviewPicture = function() {
             // Draw preview image
             this.ctx.drawImage(this.puzzlePictureShadow, this.ctx.canvas.width/4, this.ctx.canvas.height/4, this.ctx.canvas.width/2, this.ctx.canvas.height/2);
