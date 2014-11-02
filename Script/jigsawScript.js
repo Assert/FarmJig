@@ -1,8 +1,8 @@
 var Jigsaw = function() {
     
-    var constructor = function Jigsaw(canvasID, rows, columns)
+    var constructor = function Jigsaw(canvasID, rows, columns, mode)
     {
-        this.MODE = "HARD"; //HARD and EASY
+        this.MODE = mode;
 
         this.TOTAL_ROWS = rows;
         this.TOTAL_COLUMNS = columns; 
