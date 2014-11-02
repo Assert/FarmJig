@@ -426,23 +426,52 @@ var Jigsaw = function() {
         };
 
         this.drawPiece = function(piece) {
-            this.drawSection(piece.no, piece.x, piece.y, this.BLOCK_WIDTH, this.BLOCK_HEIGHT);
+           // this.drawSection(piece.no, piece.x, piece.y, this.BLOCK_WIDTH, this.BLOCK_HEIGHT);
+            
+            
+            this.ctx.save();
+            
+            var srcX = (piece.no % this.TOTAL_COLUMNS) * this.PIECES_WIDTH;
+            var srcY = Math.floor(piece.no / this.TOTAL_COLUMNS) * this.PIECES_HEIGHT;
+            
+            
+ 
+            
+            this.ctx.drawImage(this.puzzlePicture, srcX, srcY, this.PIECES_WIDTH, this.PIECES_HEIGHT, piece.x, piece.y, this.BLOCK_WIDTH, this.BLOCK_HEIGHT);
+//            this.ctx.drawImage(this.puzzlePicture, srcX, srcY, this.BLOCK_WIDTH, this.BLOCK_HEIGHT, piece.x, piece.y, this.PIECES_WIDTH, this.PIECES_HEIGHT);
+            
+            
+            this.ctx.restore();            
+            
+            
+            
+            // Vi må ha en "ratio" mellom screen size og org picture size...
+            
+           // alert(this.ctx.canvas.height); // 300 på 3GS
+            alert(document.getElementById("pig").naturalHeight); // 852 pig
+            
+            
         };
 
         this.drawPreviewPicture = function() {
             // Draw preview image
-            this.ctx.drawImage(this.puzzlePictureShadow, 0, 0, this.ORG_PUZZLE_WIDTH, this.ORG_PUZZLE_HEIGHT, this.PUZZLE_PADDING_LEFT, this.PUZZLE_PADDING_TOP, this.SHOW_PUZZLE_WIDTH, this.SHOW_PUZZLE_HEIGHT);        
+            this.ctx.drawImage(this.puzzlePictureShadow, this.ctx.canvas.width/4, this.ctx.canvas.height/4, this.ctx.canvas.width/2, this.ctx.canvas.height/2);
         };
 
         this.drawSection = function(pieceNumber, destX, destY, destWidth, destHeight) {
             this.ctx.save();
+            
+            
             var srcX = (pieceNumber % this.TOTAL_COLUMNS) * this.PIECES_WIDTH;
             var srcY = Math.floor(pieceNumber / this.TOTAL_COLUMNS) * this.PIECES_HEIGHT;
+     
+            
             this.ctx.drawImage(this.puzzlePicture, srcX, srcY, this.PIECES_WIDTH, this.PIECES_HEIGHT, destX, destY, destWidth, destHeight);
+            
+            
             this.ctx.restore();
         };
         this.drawBackGround = function() {
-          //  this.ctx.drawImage(this.background_image, 0, 0);  
             this.ctx.drawImage(this.background_image, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height)            
         };         
         
