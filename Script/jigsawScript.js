@@ -2,11 +2,8 @@ var Jigsaw = function() {
     
     var constructor = function Jigsaw(canvasID, rows, columns)
     {
-        var privateMethod = function() {};
-        this.publicMethod = function() {};
-        
         this.MODE = "HARD"; //HARD and EASY
-        // Grid to
+
         this.TOTAL_ROWS = rows;
         this.TOTAL_COLUMNS = columns; 
 
@@ -20,28 +17,16 @@ var Jigsaw = function() {
         this.ctx.canvas.width  = window.innerWidth;
         this.ctx.canvas.height = window.innerHeight;
         
-        // Org size of image
-        this.ORG_PUZZLE_WIDTH = this.ctx.canvas.width;
-        this.ORG_PUZZLE_HEIGHT = this.ctx.canvas.height;
 
-        // Zoom image to (This is the "show puzzle size)
-        // Todo : All the size vars need to recalc from the image size (like pig) and not the canvas
-        this.SHOW_PUZZLE_WIDTH = this.ORG_PUZZLE_WIDTH / 2;
-        this.SHOW_PUZZLE_HEIGHT = this.ORG_PUZZLE_HEIGHT / 2;
-
-
-        // Size of the pieces
-        this.PIECES_WIDTH = Math.round(this.ORG_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
-        this.PIECES_HEIGHT = Math.round(this.ORG_PUZZLE_HEIGHT / this.TOTAL_ROWS);
-
-        this.BLOCK_WIDTH = Math.round(this.SHOW_PUZZLE_WIDTH / this.TOTAL_COLUMNS);
-        this.BLOCK_HEIGHT = Math.round(this.SHOW_PUZZLE_HEIGHT / this.TOTAL_ROWS);
+        this.PUZZLE_BOARD_WIDTH = this.ctx.canvas.width / 2; // 50% of the screen
+        this.PUZZLE_BOARD_HEIGHT = this.ctx.canvas.height / 2;
 
         // Set jugsaw to middle
-        this.PUZZLE_PADDING_TOP = this.SHOW_PUZZLE_HEIGHT / 2;
-        this.PUZZLE_PADDING_LEFT = this.SHOW_PUZZLE_WIDTH / 2;
+        this.PUZZLE_PADDING_TOP = this.PUZZLE_BOARD_HEIGHT / 2; //50% of the board = 25% of the screen
+        this.PUZZLE_PADDING_LEFT = this.PUZZLE_BOARD_WIDTH / 2;
 
-
+        this.PUZZLE_PIECE_WIDTH = Math.round(this.PUZZLE_BOARD_WIDTH / this.TOTAL_COLUMNS);
+        this.PUZZLE_PIECE_HEIGHT = Math.round(this.PUZZLE_BOARD_HEIGHT / this.TOTAL_ROWS);
 
         var mySelf;
         this.loadGame = function () {
@@ -97,49 +82,51 @@ var Jigsaw = function() {
             this.canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
         };
 
-        this.allPieces = function() {
+        this.numberOfPieces = function() {
           return this.TOTAL_ROWS * this.TOTAL_COLUMNS;
         };
 
         this.showIndex = function() {
             this.clearCanvas();
             this.drawBackGround();
-            
 
+            // Scale and place index animals
             var pig = document.getElementById("indexPig");
-            pig.style.top = this.xxxY(300); 
-            pig.style.left = this.xxxX(20); 
-            pig.style.width = this.xxxX(170); 
+            pig.style.top = this.calcHeightFromReference(300); 
+            pig.style.left = this.calcWidthFromReference(20); 
+            pig.style.width = this.calcWidthFromReference(170); 
 
             var sheep = document.getElementById("indexSheep");
-            sheep.style.top = this.xxxY(300); // "300px";
-            sheep.style.left = this.xxxX(250); //"250px";
-            sheep.style.width = this.xxxX(170); //"170px";
+            sheep.style.top = this.calcHeightFromReference(300); 
+            sheep.style.left = this.calcWidthFromReference(250);
+            sheep.style.width = this.calcWidthFromReference(170);
 
             var duck = document.getElementById("indexDuck");
-            duck.style.top = this.xxxY(410); // "410px";
-            duck.style.left = this.xxxX(690); //"690px";
-            duck.style.width = this.xxxX(70); //"70px";
+            duck.style.top = this.calcHeightFromReference(410);
+            duck.style.left = this.calcWidthFromReference(690);
+            duck.style.width = this.calcWidthFromReference(70);
 
             var donkey = document.getElementById("indexDonkey");
-            donkey.style.top = this.xxxY(300); // "300px";
-            donkey.style.left = this.xxxX(430); //"430px";
-            donkey.style.width = this.xxxX(170); //"170px";
+            donkey.style.top = this.calcHeightFromReference(300);
+            donkey.style.left = this.calcWidthFromReference(430);
+            donkey.style.width = this.calcWidthFromReference(170);
 
             // Show index
             document.getElementById("backArrow").style.display = 'none';
             document.getElementById("indexScreen").style.visibility = 'visible';
         }            
         
-        this.xxxY = function(p) {
-            return Math.round(p/577 * this.ctx.canvas.height) +"px";
+        this.calcHeightFromReference = function(p) {
+            var refHeight = 577;
+            return Math.round(p/refHeight * this.ctx.canvas.height) + "px";
         };
-        this.xxxX = function(p) {
-            return Math.round(p/962 * this.ctx.canvas.width) +"px";
+        this.calcWidthFromReference = function(p) {
+            var refWidth = 962;
+            return Math.round(p/refWidth * this.ctx.canvas.width) + "px";
         };
-        
         
         this.startPuzzle = function() {
+            // Hide index and show arrow
             document.getElementById("indexScreen").style.visibility = 'hidden';
             document.getElementById("backArrow").style.display = 'block';
 
@@ -152,7 +139,7 @@ var Jigsaw = function() {
         };
 
         this.makeBoardSlotsAndPieces = function() {
-            for (var i = 0; i < this.allPieces(); i++) {
+            for (var i = 0; i < this.numberOfPieces(); i++) {
                 var piece = this.makePuzzlePiece(i);
                 this.pieceList.push(piece);
 
@@ -180,7 +167,6 @@ var Jigsaw = function() {
             this.drawGridLines();
         };
 
-
         // Draw all pieces thats not selected
         this.updateAllNonSelectedPieces = function() {
             for (var i = 0; i < this.pieceList.length; i++) {
@@ -194,14 +180,14 @@ var Jigsaw = function() {
         this.finishGame = function() {
             intel.xdk.player.startAudio("Audio/finish.mp3",false);
 
-            this.remove_width = this.BLOCK_WIDTH;
-            this.remove_height = this.BLOCK_HEIGHT;
+            this.remove_width = this.PUZZLE_PIECE_WIDTH;
+            this.remove_height = this.PUZZLE_PIECE_HEIGHT;
             this.interval = setInterval(function () { mySelf.endGame(); }, 100);
         };
 
         this.endGame = function () {
-            this.remove_width -= this.SHOW_PUZZLE_WIDTH / 20;
-            this.remove_height -= this.SHOW_PUZZLE_HEIGHT / 20;
+            this.remove_width -= this.PUZZLE_BOARD_WIDTH / 20;
+            this.remove_height -= this.PUZZLE_BOARD_HEIGHT / 20;
 
             if (this.remove_width >= 0 && this.remove_height >= 0) {
                 this.clearCanvas();
@@ -210,13 +196,13 @@ var Jigsaw = function() {
                 // Redraw all pieces
                 for (var i = 0; i < this.pieceList.length; i++) {
                     var imgBlock = this.pieceList[i];
-                    imgBlock.x += this.SHOW_PUZZLE_WIDTH / 40;
-                    imgBlock.y += this.SHOW_PUZZLE_HEIGHT / 40;
+                    imgBlock.x += this.PUZZLE_BOARD_WIDTH / 40;
+                    imgBlock.y += this.PUZZLE_BOARD_HEIGHT / 40;
                     this.drawSection(imgBlock, this.remove_width, this.remove_height);
                 }
             } else {
                 clearInterval(this.interval);
-
+                // Game and anim has ended. Go to index
                 this.showIndex();
             }
         };
@@ -232,8 +218,8 @@ var Jigsaw = function() {
 
             if (mySelf.selectedPiece) {
                 mySelf.pieceList[mySelf.selectedPiece.no].isSelected = true;
-                      mySelf.offsetX = e.pageX - mySelf.selectedPiece.x;
-                      mySelf.offsetY = e.pageY - mySelf.selectedPiece.y;
+                mySelf.offsetX = e.pageX - mySelf.selectedPiece.x;
+                mySelf.offsetY = e.pageY - mySelf.selectedPiece.y;
             }
         };
 
@@ -244,9 +230,7 @@ var Jigsaw = function() {
                 if(mySelf.MODE=="HARD"){
 
                     var hoverSlot = mySelf.checkIfWeHoverRightSlot();
-
                     if(hoverSlot){
-
                         // Snap
                         mySelf.pieceList[index].x = hoverSlot.x;
                         mySelf.pieceList[index].y = hoverSlot.y;
@@ -272,31 +256,23 @@ var Jigsaw = function() {
             }
         };
 
-
-
         this.handleOnMouseMove = function(e) {
-
-            // Denne fyrer hele tiden..
-
             e.preventDefault();//Stops the default behavior
 
             if (mySelf.selectedPiece) {
                 var hoverSlot = mySelf.checkIfWeHoverRightSlot();
-
-
                 if(hoverSlot){
                     if(mySelf.MODE=="EASY"){
-                        // Easy mode and we hover the right slot
-                        // Snap
+                        // Easy mode and we hover the right slot.. lets snap
                         var i = mySelf.selectedPiece.no;
                         mySelf.pieceList[i].x = hoverSlot.x;
-                        // Snap
                         mySelf.pieceList[i].y = hoverSlot.y;
-                        // Unselect piece
-                          mySelf.pieceList[i].isSelected = false;
-                            mySelf.selectedPiece = null;
 
-                            mySelf.updateScreen();
+                        // Unselect piece
+                        mySelf.pieceList[i].isSelected = false;
+                        mySelf.selectedPiece = null;
+
+                        mySelf.updateScreen();
 
                         // Player can be finnished as he does not need to let go of piece
                              if (mySelf.isFinished()) {
@@ -307,10 +283,11 @@ var Jigsaw = function() {
                         //Move
                         mySelf.selectedPiece.x = e.pageX - mySelf.offsetX;
                         mySelf.selectedPiece.y = e.pageY - mySelf.offsetY;
+                        
                         mySelf.updateScreen();         
                     }
                 }else{
-                    // Not hovering any slot
+                    // Not hovering the right slot
                     //Move
                     mySelf.selectedPiece.x = e.pageX - mySelf.offsetX;
                     mySelf.selectedPiece.y = e.pageY - mySelf.offsetY;
@@ -327,8 +304,8 @@ var Jigsaw = function() {
             var offsetX = Math.abs(this.selectedPiece.x - correctSlot.x);
             var offsetY = Math.abs(this.selectedPiece.y - correctSlot.y);
 
-            var errorMarginX = this.SHOW_PUZZLE_WIDTH / 20;
-            var errorMarginY = this.SHOW_PUZZLE_HEIGHT / 20;
+            var errorMarginX = this.PUZZLE_BOARD_WIDTH / 20;
+            var errorMarginY = this.PUZZLE_BOARD_HEIGHT / 20;
             
             if (offsetX <errorMarginX && offsetY <errorMarginY) {
                 return correctSlot;
@@ -336,26 +313,27 @@ var Jigsaw = function() {
             return null;
         };
 
+        // todo: her kan vi velge noen "gode" plasser utenfor brettet og sette brikkene der før spillet (random)
         // Give pieces a random x and y start position (by index)
         this.makePuzzlePiece = function(index) {
-                var randValX = (Math.random() * this.ORG_PUZZLE_WIDTH);
-                if (randValX>(this.ORG_PUZZLE_WIDTH-this.BLOCK_WIDTH)) randValX=this.ORG_PUZZLE_WIDTH-this.BLOCK_WIDTH;
+                var randValX = (Math.random() * this.ctx.canvas.width);
+                if (randValX>(this.ctx.canvas.width-this.PUZZLE_PIECE_WIDTH)) randValX=this.ctx.canvas.width-this.PUZZLE_PIECE_WIDTH;
 
                 randValX = Math.round(randValX);
 
                 var randValY;
                  if (yesNo()){
-                    randValY=this.ORG_PUZZLE_HEIGHT / 70;
+                    randValY=this.ctx.canvas.height / 70;
                 }else{
-                    randValY=this.ORG_PUZZLE_HEIGHT - this.BLOCK_HEIGHT;
+                    randValY=this.ctx.canvas.height - this.PUZZLE_PIECE_HEIGHT;
                 }
             return new puzzlePiece(index, randValX, randValY);
         };
 
         // Make a given slot (by its index)
         this.makeBoardSlot = function(index) {
-            var x = this.PUZZLE_PADDING_LEFT + (index % this.TOTAL_COLUMNS) * this.BLOCK_WIDTH;
-            var y = this.PUZZLE_PADDING_TOP + Math.floor(index / this.TOTAL_COLUMNS) * this.BLOCK_HEIGHT;
+            var x = this.PUZZLE_PADDING_LEFT + (index % this.TOTAL_COLUMNS) * this.PUZZLE_PIECE_WIDTH;
+            var y = this.PUZZLE_PADDING_TOP + Math.floor(index / this.TOTAL_COLUMNS) * this.PUZZLE_PIECE_HEIGHT;
 
             return new puzzleSlot(index, x, y);        
         };
@@ -366,10 +344,10 @@ var Jigsaw = function() {
                 var piece = this.pieceList[i];
 
                 var x1 = piece.x;
-                var x2 = x1 + this.BLOCK_WIDTH;
+                var x2 = x1 + this.PUZZLE_PIECE_WIDTH;
 
                 var y1 = piece.y;
-                var y2 = y1 + this.BLOCK_HEIGHT;
+                var y2 = y1 + this.PUZZLE_PIECE_HEIGHT;
 
                 if ((x >= x1 && x <= x2) && (y >= y1 && y <= y2)) {
                     return piece;
@@ -380,7 +358,7 @@ var Jigsaw = function() {
 
         // Check if all pieces are in the right slot
         this.isFinished = function() {
-            for (var i = 0; i < this.allPieces(); i++) {
+            for (var i = 0; i < this.numberOfPieces(); i++) {
                 var piece = this.pieceList[i];
                 var slot = this.slotList[i];
 
@@ -392,15 +370,10 @@ var Jigsaw = function() {
             return true;
         };
 
-
-        // Draw is undere here... might move to own class
-
-
         // Clear all of the canvas
         this.clearCanvas = function() {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         };
-
 
         this.drawGridLines = function() {
             this.ctx.strokeStyle = "#000000"; 
@@ -409,34 +382,31 @@ var Jigsaw = function() {
 
             // draw verticle lines
             for (var i = 0; i <= this.TOTAL_COLUMNS; i++) {
-                var x = this.PUZZLE_PADDING_LEFT + (this.BLOCK_WIDTH * i);
+                var x = this.PUZZLE_PADDING_LEFT + (this.PUZZLE_PIECE_WIDTH * i);
                 this.ctx.moveTo(x, this.PUZZLE_PADDING_TOP);
-                this.ctx.lineTo(x, this.SHOW_PUZZLE_HEIGHT+this.PUZZLE_PADDING_TOP);
+                this.ctx.lineTo(x, this.PUZZLE_BOARD_HEIGHT+this.PUZZLE_PADDING_TOP);
             }
 
             // draw horizontal lines
             for (i = 0; i <= this.TOTAL_ROWS; i++) {
-                var y = this.PUZZLE_PADDING_TOP + (this.BLOCK_HEIGHT * i);
+                var y = this.PUZZLE_PADDING_TOP + (this.PUZZLE_PIECE_HEIGHT * i);
                 this.ctx.moveTo(this.PUZZLE_PADDING_LEFT, y);
-                this.ctx.lineTo(this.SHOW_PUZZLE_WIDTH+this.PUZZLE_PADDING_LEFT, y);
+                this.ctx.lineTo(this.PUZZLE_BOARD_WIDTH+this.PUZZLE_PADDING_LEFT, y);
             }
 
             this.ctx.closePath();
             this.ctx.stroke();
         };
-
         
-        //todo: some vars render the globals useless now
-        // and some consts 6,4,3 and 2 are hard-coe to a grid og 3x2
         this.drawSection = function(piece, pieceWidthOnScreen, pieceHeightOnScreen) {
             this.ctx.save();
             
             // If width is not sendt we calulate.. we only send with and height on end-anim
-            if (pieceWidthOnScreen == undefined) pieceWidthOnScreen = Math.round(this.ctx.canvas.width/6);
-            if (pieceHeightOnScreen == undefined) pieceHeightOnScreen = Math.round(this.ctx.canvas.height/4);
+            if (pieceWidthOnScreen == undefined) pieceWidthOnScreen = this.PUZZLE_PIECE_WIDTH; 
+            if (pieceHeightOnScreen == undefined) pieceHeightOnScreen = this.PUZZLE_PIECE_HEIGHT;
             
-            var pieceWidthOnPicture = Math.round(this.puzzlePicture.naturalWidth / 3);
-            var pieceHeightOnPicture = Math.round(this.puzzlePicture.naturalHeight / 2);
+            var pieceWidthOnPicture = Math.round(this.puzzlePicture.naturalWidth / this.TOTAL_COLUMNS);
+            var pieceHeightOnPicture = Math.round(this.puzzlePicture.naturalHeight / this.TOTAL_ROWS);
             
             var srcX = (piece.no % this.TOTAL_COLUMNS) * pieceWidthOnPicture;
             var srcY = Math.floor(piece.no / this.TOTAL_COLUMNS) * pieceHeightOnPicture;
@@ -446,10 +416,8 @@ var Jigsaw = function() {
             this.ctx.restore();
         };
 
-        // hard-coded that the preview will take 50% of the screen
         this.drawPreviewPicture = function() {
-            // Draw preview image
-            this.ctx.drawImage(this.puzzlePictureShadow, this.ctx.canvas.width/4, this.ctx.canvas.height/4, this.ctx.canvas.width/2, this.ctx.canvas.height/2);
+            this.ctx.drawImage(this.puzzlePictureShadow, this.PUZZLE_PADDING_LEFT, this.PUZZLE_PADDING_TOP, this.PUZZLE_BOARD_WIDTH, this.PUZZLE_BOARD_HEIGHT);
         };
 
         this.drawBackGround = function() {
@@ -458,8 +426,5 @@ var Jigsaw = function() {
         
     };
     
-    constructor.publicStaticMethod = function() {};
-
     return constructor;
-   
 }();
