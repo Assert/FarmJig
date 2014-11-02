@@ -44,31 +44,55 @@ var Jigsaw = function() {
             
             var pig = document.getElementById("indexPig");
             pig.onclick = function() { 
-                mySelf.puzzlePicture = document.getElementById("indexPig");
+                mySelf.puzzlePicture = this;
                 mySelf.puzzlePictureShadow = document.getElementById("pigShadow");
                 mySelf.startPuzzle();
             };     
-
+         
             var sheep = document.getElementById("indexSheep");
             sheep.onclick = function() { 
-                mySelf.puzzlePicture = document.getElementById("indexSheep");
+                mySelf.puzzlePicture = this;
                 mySelf.puzzlePictureShadow = document.getElementById("sheepShadow");
                 mySelf.startPuzzle();
             };   
 
             var duck = document.getElementById("indexDuck");
             duck.onclick = function() { 
-                mySelf.puzzlePicture = document.getElementById("indexDuck");
+                mySelf.puzzlePicture = this;
                 mySelf.puzzlePictureShadow = document.getElementById("duckShadow");
                 mySelf.startPuzzle();
             };   
 
             var donkey = document.getElementById("indexDonkey");
             donkey.onclick = function() { 
-                mySelf.puzzlePicture = document.getElementById("indexDonkey");
+                mySelf.puzzlePicture = this;
                 mySelf.puzzlePictureShadow = document.getElementById("donkeyShadow");
                 mySelf.startPuzzle();
             };   
+            
+            
+            pig.onmousedown = this.moveIn;
+            pig.onmouseup = this.moveOut;
+            pig.addEventListener("touchstart", this.moveIn, false);
+            pig.addEventListener("touchend", this.moveOut, false);
+
+            sheep.onmousedown = this.moveIn;
+            sheep.onmouseup = this.moveOut;
+            sheep.addEventListener("touchstart", this.moveIn, false);
+            sheep.addEventListener("touchend", this.moveOut, false);
+
+            duck.onmousedown = this.moveIn;
+            duck.onmouseup = this.moveOut;
+            duck.addEventListener("touchstart", this.moveIn, false);
+            duck.addEventListener("touchend", this.moveOut, false);
+
+            donkey.onmousedown = this.moveIn;
+            donkey.onmouseup = this.moveOut;
+            donkey.addEventListener("touchstart", this.moveIn, false);
+            donkey.addEventListener("touchend", this.moveOut, false);
+
+               
+            
             
             this.canvas.onmousedown = this.handleOnMouseDown;
             this.canvas.onmouseup = this.handleOnMouseUp;
@@ -79,6 +103,29 @@ var Jigsaw = function() {
             this.canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
         };
 
+         this.moveIn = function(e) {
+                e.preventDefault();//Stops the default behavior
+
+                this.style.top = mySelf.move(this.style.top, 5);
+                this.style.left = mySelf.move(this.style.left, 5);
+                this.style.width = mySelf.move(this.style.width, -20);
+             
+        };
+
+         this.moveOut = function(e) {
+                e.preventDefault();//Stops the default behavior
+                this.style.top = mySelf.move(this.style.top, -5);
+                this.style.left = mySelf.move(this.style.left, -5);
+                this.style.width = mySelf.move(this.style.width, 20);
+        };
+        
+        this.move = function(aa, step) {
+            var res = parseInt(aa);
+            res += step;
+            return res + 'px';
+        };
+     
+        
         this.numberOfPieces = function() {
           return this.TOTAL_ROWS * this.TOTAL_COLUMNS;
         };
