@@ -43,33 +43,21 @@ var Jigsaw = function() {
             };
             
             var pig = document.getElementById("indexPig");
-            pig.onclick = function() { 
-                mySelf.puzzlePicture = this;
-                mySelf.puzzlePictureShadow = document.getElementById("pigShadow");
-                mySelf.startPuzzle();
-            };     
-         
+            pig.onclick = this.loadPuzzle;
+            pig.addEventListener("click", this.loadPuzzle, false);
+            
             var sheep = document.getElementById("indexSheep");
-            sheep.onclick = function() { 
-                mySelf.puzzlePicture = this;
-                mySelf.puzzlePictureShadow = document.getElementById("sheepShadow");
-                mySelf.startPuzzle();
-            };   
+            sheep.onclick = this.loadPuzzle;
+            sheep.addEventListener("click", this.loadPuzzle, false);
 
             var duck = document.getElementById("indexDuck");
-            duck.onclick = function() { 
-                mySelf.puzzlePicture = this;
-                mySelf.puzzlePictureShadow = document.getElementById("duckShadow");
-                mySelf.startPuzzle();
-            };   
+            duck.onclick = this.loadPuzzle;
+            duck.addEventListener("click", this.loadPuzzle, false);
 
             var donkey = document.getElementById("indexDonkey");
-            donkey.onclick = function() { 
-                mySelf.puzzlePicture = this;
-                mySelf.puzzlePictureShadow = document.getElementById("donkeyShadow");
-                mySelf.startPuzzle();
-            };   
-            
+            donkey.onclick = this.loadPuzzle;
+            donkey.addEventListener("click", this.loadPuzzle, false);
+
             
             pig.onmousedown = this.moveIn;
             pig.onmouseup = this.moveOut;
@@ -91,7 +79,13 @@ var Jigsaw = function() {
             donkey.addEventListener("touchstart", this.moveIn, false);
             donkey.addEventListener("touchend", this.moveOut, false);
 
-               
+            /* Denne flytter pilen så mye at mouse-up eventet ikke fyrer :)
+            arrow.onmousedown = this.moveIn;
+            arrow.onmouseup = this.moveOut;
+            arrow.addEventListener("touchstart", this.moveIn, false);
+            arrow.addEventListener("touchend", this.moveOut, false);
+
+            */ 
             
             
             this.canvas.onmousedown = this.handleOnMouseDown;
@@ -103,9 +97,13 @@ var Jigsaw = function() {
             this.canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
         };
 
+        this.loadPuzzle = function() { 
+                mySelf.puzzlePicture = this;
+                mySelf.startPuzzle();
+        };           
+        
          this.moveIn = function(e) {
                 e.preventDefault();//Stops the default behavior
-
                 this.style.top = mySelf.move(this.style.top, 5);
                 this.style.left = mySelf.move(this.style.left, 5);
                 this.style.width = mySelf.move(this.style.width, -20);
@@ -119,12 +117,11 @@ var Jigsaw = function() {
                 this.style.width = mySelf.move(this.style.width, 20);
         };
         
-        this.move = function(aa, step) {
-            var res = parseInt(aa);
-            res += step;
-            return res + 'px';
+        this.move = function(sizeInPx, step) {
+            var size = parseInt(sizeInPx);
+            size += step;
+            return size + 'px';
         };
-     
         
         this.numberOfPieces = function() {
           return this.TOTAL_ROWS * this.TOTAL_COLUMNS;
@@ -466,7 +463,11 @@ var Jigsaw = function() {
         };
 
         this.drawPreviewPicture = function() {
-            this.ctx.drawImage(this.puzzlePictureShadow, this.PUZZLE_PADDING_LEFT, this.PUZZLE_PADDING_TOP, this.PUZZLE_BOARD_WIDTH, this.PUZZLE_BOARD_HEIGHT);
+            this.ctx.save();
+            // Kan lage et pixel filter som gjør bilde B&W
+            this.ctx.globalAlpha = 0.5;
+            this.ctx.drawImage(this.puzzlePicture, this.PUZZLE_PADDING_LEFT, this.PUZZLE_PADDING_TOP, this.PUZZLE_BOARD_WIDTH, this.PUZZLE_BOARD_HEIGHT);
+            this.ctx.restore();
         };
 
         this.drawBackGround = function() {
