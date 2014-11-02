@@ -1,8 +1,5 @@
 var Jigsaw = function() {
     
-    
-    //1024 - 748
-    
     var constructor = function Jigsaw(canvasID, rows, columns)
     {
         var privateMethod = function() {};
@@ -18,7 +15,10 @@ var Jigsaw = function() {
         this.canvas = document.getElementById(canvasID);
         this.ctx = this.canvas.getContext('2d');
 
-        
+        this.selectedPiece = null;
+
+        this.ctx.canvas.width  = window.innerWidth;
+        this.ctx.canvas.height = window.innerHeight;
         
         // Org size of image
         this.ORG_PUZZLE_WIDTH = this.ctx.canvas.width;
@@ -41,13 +41,15 @@ var Jigsaw = function() {
         this.PUZZLE_PADDING_TOP = this.SHOW_PUZZLE_HEIGHT / 2;
         this.PUZZLE_PADDING_LEFT = this.SHOW_PUZZLE_WIDTH / 2;
 
-        this.selectedPiece = null;
 
 
         var mySelf;
         this.loadGame = function () {
             mySelf = this; // eventene har annet "this" og må bruke denne
 
+            this.drawBackGround();
+            this.showIndex();
+            
             this.registerTouchEvents();
         };
 
@@ -102,10 +104,40 @@ var Jigsaw = function() {
         this.showIndex = function() {
             this.clearCanvas();
             this.drawBackGround();
+            
+
+            var pig = document.getElementById("indexPig");
+            pig.style.top = this.xxxY(300); 
+            pig.style.left = this.xxxX(20); 
+            pig.style.width = this.xxxX(170); 
+
+            var sheep = document.getElementById("indexSheep");
+            sheep.style.top = this.xxxY(300); // "300px";
+            sheep.style.left = this.xxxX(250); //"250px";
+            sheep.style.width = this.xxxX(170); //"170px";
+
+            var duck = document.getElementById("indexDuck");
+            duck.style.top = this.xxxY(410); // "410px";
+            duck.style.left = this.xxxX(690); //"690px";
+            duck.style.width = this.xxxX(70); //"70px";
+
+            var donkey = document.getElementById("indexDonkey");
+            donkey.style.top = this.xxxY(300); // "300px";
+            donkey.style.left = this.xxxX(430); //"430px";
+            donkey.style.width = this.xxxX(170); //"170px";
+
             // Show index
             document.getElementById("backArrow").style.display = 'none';
             document.getElementById("indexScreen").style.visibility = 'visible';
         }            
+        
+        this.xxxY = function(p) {
+            return Math.round(p/577 * this.ctx.canvas.height) +"px";
+        };
+        this.xxxX = function(p) {
+            return Math.round(p/962 * this.ctx.canvas.width) +"px";
+        };
+        
         
         this.startPuzzle = function() {
             document.getElementById("indexScreen").style.visibility = 'hidden';
@@ -410,7 +442,8 @@ var Jigsaw = function() {
             this.ctx.restore();
         };
         this.drawBackGround = function() {
-            this.ctx.drawImage(this.background_image, 0, 0);  
+          //  this.ctx.drawImage(this.background_image, 0, 0);  
+            this.ctx.drawImage(this.background_image, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height)            
         };         
         
     };
