@@ -170,7 +170,7 @@ var Jigsaw = function() {
 
             if (this.selectedPiece) {
                 // Draw selected block while it is moving
-                this.drawPiece(this.selectedPiece);
+                this.drawSection(this.selectedPiece);
             }
         };
 
@@ -186,7 +186,7 @@ var Jigsaw = function() {
             for (var i = 0; i < this.pieceList.length; i++) {
                 var piece = this.pieceList[i];
                 if (piece.isSelected === false) {
-                    this.drawPiece(piece);
+                    this.drawSection(piece);
                 }
             }
         };
@@ -212,7 +212,7 @@ var Jigsaw = function() {
                     var imgBlock = this.pieceList[i];
                     imgBlock.x += this.SHOW_PUZZLE_WIDTH / 40;
                     imgBlock.y += this.SHOW_PUZZLE_HEIGHT / 40;
-                    this.drawSection(imgBlock.no, imgBlock.x, imgBlock.y, this.remove_width, this.remove_height);
+                    this.drawSection(imgBlock, this.remove_width, this.remove_height);
                 }
             } else {
                 clearInterval(this.interval);
@@ -425,28 +425,25 @@ var Jigsaw = function() {
             this.ctx.stroke();
         };
 
-        this.drawPiece = function(piece) {
-           // this.drawSection(piece.no, piece.x, piece.y, this.BLOCK_WIDTH, this.BLOCK_HEIGHT);
-            
-            
+        
+        //todo: some vars render the globals useless now
+        // and some consts 3 and 2 are hard-coe to a grid og 3x2
+        this.drawSection = function(piece, pieceWidthOnScreen, pieceHeightOnScreen) {
             this.ctx.save();
             
-            var pieceWidthOnScreen = Math.round(this.ctx.canvas.width/6);
-            var pieceHeightOnScreen = Math.round(this.ctx.canvas.height/4);
+            // If width is not sendt we calulate.. we only send with and height on end-anim
+            if (pieceWidthOnScreen == undefined) pieceWidthOnScreen = Math.round(this.ctx.canvas.width/6);
+            if (pieceHeightOnScreen == undefined) pieceHeightOnScreen = Math.round(this.ctx.canvas.height/4);
             
             var pieceWidthOnPicture = Math.round(this.puzzlePicture.naturalWidth / 3);
             var pieceHeightOnPicture = Math.round(this.puzzlePicture.naturalHeight / 2);
             
-            
-            
             var srcX = (piece.no % this.TOTAL_COLUMNS) * pieceWidthOnPicture;
             var srcY = Math.floor(piece.no / this.TOTAL_COLUMNS) * pieceHeightOnPicture;
-
             
-            this.ctx.drawImage(this.puzzlePicture, srcX, srcY, pieceWidthOnPicture, pieceHeightOnPicture, piece.x, piece.y, pieceWidthOnScreen, pieceWidthOnScreen);
-
+            this.ctx.drawImage(this.puzzlePicture, srcX, srcY, pieceWidthOnPicture, pieceHeightOnPicture, piece.x, piece.y, pieceWidthOnScreen, pieceHeightOnScreen);
             
-            this.ctx.restore();            
+            this.ctx.restore();
         };
 
         this.drawPreviewPicture = function() {
@@ -454,19 +451,6 @@ var Jigsaw = function() {
             this.ctx.drawImage(this.puzzlePictureShadow, this.ctx.canvas.width/4, this.ctx.canvas.height/4, this.ctx.canvas.width/2, this.ctx.canvas.height/2);
         };
 
-        this.drawSection = function(pieceNumber, destX, destY, destWidth, destHeight) {
-            this.ctx.save();
-            
-            
-            var srcX = (pieceNumber % this.TOTAL_COLUMNS) * this.PIECES_WIDTH;
-            var srcY = Math.floor(pieceNumber / this.TOTAL_COLUMNS) * this.PIECES_HEIGHT;
-     
-            
-            this.ctx.drawImage(this.puzzlePicture, srcX, srcY, this.PIECES_WIDTH, this.PIECES_HEIGHT, destX, destY, destWidth, destHeight);
-            
-            
-            this.ctx.restore();
-        };
         this.drawBackGround = function() {
             this.ctx.drawImage(this.background_image, 0, 0, this.ctx.canvas.width, this.ctx.canvas.height)            
         };         
