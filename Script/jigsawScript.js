@@ -44,28 +44,16 @@ var Jigsaw = function() {
             };
             
             var pig = document.getElementById("indexPig");
-            pig.onmousedown = this.moveIn;
-            pig.onmouseup = this.moveOut;
-            pig.addEventListener("touchstart", this.moveIn, false);
-            pig.addEventListener("touchend", this.moveOut, false);
+            this.addEventsToIndexSelector(pig);
             
             var sheep = document.getElementById("indexSheep");
-            sheep.onmousedown = this.moveIn;
-            sheep.onmouseup = this.moveOut;
-            sheep.addEventListener("touchstart", this.moveIn, false);
-            sheep.addEventListener("touchend", this.moveOut, false);
+            this.addEventsToIndexSelector(sheep);
 
             var duck = document.getElementById("indexDuck");
-            duck.onmousedown = this.moveIn;
-            duck.onmouseup = this.moveOut;
-            duck.addEventListener("touchstart", this.moveIn, false);
-            duck.addEventListener("touchend", this.moveOut, false);
-
+            this.addEventsToIndexSelector(duck);
+            
             var donkey = document.getElementById("indexDonkey");
-            donkey.onmousedown = this.moveIn;
-            donkey.onmouseup = this.moveOut;
-            donkey.addEventListener("touchstart", this.moveIn, false);
-            donkey.addEventListener("touchend", this.moveOut, false);
+            this.addEventsToIndexSelector(donkey);
 
             /* Denne flytter pilen så mye at mouse-up eventet ikke fyrer :)
             arrow.onmousedown = this.moveIn;
@@ -74,7 +62,6 @@ var Jigsaw = function() {
             arrow.addEventListener("touchend", this.moveOut, false);
 
             */ 
-            
             
             this.canvas.onmousedown = this.handleOnMouseDown;
             this.canvas.onmouseup = this.handleOnMouseUp;
@@ -85,6 +72,14 @@ var Jigsaw = function() {
             this.canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
         };
 
+        // Used to set events on index animals
+        this.addEventsToIndexSelector = function(obj) {
+            obj.onmousedown = this.moveIn;
+            obj.onmouseup = this.moveOut;
+            obj.addEventListener("touchstart", this.moveIn, false);
+            obj.addEventListener("touchend", this.moveOut, false);
+        };
+        
          this.moveIn = function(e) {
                 e.preventDefault();//Stops the default behavior
                 this.style.top = mySelf.move(this.style.top, 5);
