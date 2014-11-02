@@ -431,26 +431,22 @@ var Jigsaw = function() {
             
             this.ctx.save();
             
-            var srcX = (piece.no % this.TOTAL_COLUMNS) * this.PIECES_WIDTH;
-            var srcY = Math.floor(piece.no / this.TOTAL_COLUMNS) * this.PIECES_HEIGHT;
+            var pieceWidthOnScreen = Math.round(this.ctx.canvas.width/6);
+            var pieceHeightOnScreen = Math.round(this.ctx.canvas.height/4);
+            
+            var pieceWidthOnPicture = Math.round(this.puzzlePicture.naturalWidth / 3);
+            var pieceHeightOnPicture = Math.round(this.puzzlePicture.naturalHeight / 2);
             
             
- 
             
-            this.ctx.drawImage(this.puzzlePicture, srcX, srcY, this.PIECES_WIDTH, this.PIECES_HEIGHT, piece.x, piece.y, this.BLOCK_WIDTH, this.BLOCK_HEIGHT);
-//            this.ctx.drawImage(this.puzzlePicture, srcX, srcY, this.BLOCK_WIDTH, this.BLOCK_HEIGHT, piece.x, piece.y, this.PIECES_WIDTH, this.PIECES_HEIGHT);
+            var srcX = (piece.no % this.TOTAL_COLUMNS) * pieceWidthOnPicture;
+            var srcY = Math.floor(piece.no / this.TOTAL_COLUMNS) * pieceHeightOnPicture;
+
             
+            this.ctx.drawImage(this.puzzlePicture, srcX, srcY, pieceWidthOnPicture, pieceHeightOnPicture, piece.x, piece.y, pieceWidthOnScreen, pieceWidthOnScreen);
+
             
             this.ctx.restore();            
-            
-            
-            
-            // Vi må ha en "ratio" mellom screen size og org picture size...
-            
-           // alert(this.ctx.canvas.height); // 300 på 3GS
-            alert(document.getElementById("pig").naturalHeight); // 852 pig
-            
-            
         };
 
         this.drawPreviewPicture = function() {
