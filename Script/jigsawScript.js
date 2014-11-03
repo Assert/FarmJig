@@ -18,7 +18,7 @@ var Jigsaw = function() {
         this.PUZZLE_BOARD_WIDTH = this.ctx.canvas.width / 2; // 50% of the screen
         this.PUZZLE_BOARD_HEIGHT = this.ctx.canvas.height / 2;
 
-        // Set jugsaw to middle
+        // Set jigsaw to middle
         this.PUZZLE_PADDING_TOP = this.PUZZLE_BOARD_HEIGHT / 2; //50% of the board = 25% of the screen
         this.PUZZLE_PADDING_LEFT = this.PUZZLE_BOARD_WIDTH / 2;
 
@@ -95,7 +95,7 @@ var Jigsaw = function() {
         };
 
         this.showIndex = function() {
-            this.arr = this.findPosibleStartSlots();
+            this.arr = this.findPossibleStartSlots();
 
             this.clearCanvas();
             this.drawBackGround();
@@ -360,7 +360,7 @@ var Jigsaw = function() {
             return array;
         };
 
-        this.findPosibleStartSlots = function() {
+        this.findPossibleStartSlots = function() {
             var arr = [];
 
             var marginY = this.PUZZLE_PADDING_TOP / 4; // Margin for random movement 25% of the outside
