@@ -1,7 +1,5 @@
 var Jigsaw = function () {
-
-  var constructor = FarmJig;
-  return constructor;
+  return FarmJig;
 }();
 
 function FarmJig(canvasID, rows, columns, mode) {
@@ -60,20 +58,20 @@ function FarmJig(canvasID, rows, columns, mode) {
     var donkey = document.getElementById("indexDonkey");
     FarmJig.addEventsToIndexSelector(donkey);
 
-    FarmJig.canvas.onmousedown = this.handleOnMouseDown;
-    FarmJig.canvas.onmouseup = this.handleOnMouseUp;
-    FarmJig.canvas.onmousemove = this.handleOnMouseMove;
+    FarmJig.canvas.onmousedown = FarmJig.handleOnMouseDown;
+    FarmJig.canvas.onmouseup = FarmJig.handleOnMouseUp;
+    FarmJig.canvas.onmousemove = FarmJig.handleOnMouseMove;
 
-    FarmJig.canvas.addEventListener("touchstart", this.handleOnMouseDown, false);
-    FarmJig.canvas.addEventListener("touchend", this.handleOnMouseUp, false);
-    FarmJig.canvas.addEventListener("touchmove", this.handleOnMouseMove, false);
+    FarmJig.canvas.addEventListener("touchstart", FarmJig.handleOnMouseDown, false);
+    FarmJig.canvas.addEventListener("touchend", FarmJig.handleOnMouseUp, false);
+    FarmJig.canvas.addEventListener("touchmove", FarmJig.handleOnMouseMove, false);
   }
 
   // Used to set events on index animals
   FarmJig.addEventsToIndexSelector = addEventsToIndexSelector;
   function addEventsToIndexSelector(obj) {
-    obj.onmousedown = this.moveIn;
-    obj.onmouseup = this.moveOut;
+    obj.onmousedown = FarmJig.moveIn;
+    obj.onmouseup = FarmJig.moveOut;
     obj.addEventListener("touchstart", FarmJig.moveIn, false);
     obj.addEventListener("touchend", FarmJig.moveOut, false);
   }
@@ -213,6 +211,8 @@ function FarmJig(canvasID, rows, columns, mode) {
 
   FarmJig.finishGame = finishGame;
   function finishGame() {
+
+    //noinspection JSUnresolvedVariable,JSUnresolvedFunction
     intel.xdk.player.startAudio("Audio/finish.mp3", false);
 
     FarmJig.remove_width = FarmJig.PUZZLE_PIECE_WIDTH;
@@ -241,7 +241,7 @@ function FarmJig(canvasID, rows, columns, mode) {
     } else {
       clearInterval(FarmJig.interval);
       // Game and anim has ended. Go to index
-      this.showIndex();
+      FarmJig.showIndex();
     }
   }
 
@@ -263,7 +263,7 @@ function FarmJig(canvasID, rows, columns, mode) {
   }
 
   FarmJig.handleOnMouseUp = handleOnMouseUp;
-  function handleOnMouseUp(e) {
+  function handleOnMouseUp() {
     //In hard mode blocks will snapp to any slot, in easy they will not
     if (mySelf.selectedPiece) {
       var index = mySelf.selectedPiece.no;
@@ -360,13 +360,13 @@ function FarmJig(canvasID, rows, columns, mode) {
   FarmJig.makePuzzlePiece = makePuzzlePiece;
   function makePuzzlePiece(index) {
 
-    var tt = this.arr[index];
+    var tt = FarmJig.arr[index];
 
     var randValX = tt[0];
     var randValY = tt[1];
 
 
-    return new puzzlePiece(index, randValX, randValY);
+    return new PuzzlePiece(index, randValX, randValY);
   }
 
   FarmJig.shuffle = shuffle;
@@ -406,19 +406,19 @@ function FarmJig(canvasID, rows, columns, mode) {
       var y1 = Math.round(Math.random() * marginY);
       arr.push([x1, y1]);
 
-      var x2 = i * slotWidth + Math.random() * marginX;
+      //var x2 = i * slotWidth + Math.random() * marginX;
       var y2 = Math.round(FarmJig.PUZZLE_BOARD_HEIGHT + FarmJig.PUZZLE_PADDING_TOP + (Math.random() * marginY));
       arr.push([x1, y2]);
     }
 
     for (var j = 0; j < slotsY; j++) {
-      var x1 = Math.random() * marginX;
-      var y1 = FarmJig.PUZZLE_PADDING_TOP + (j * FarmJig.PUZZLE_PIECE_HEIGHT);
-      arr.push([x1, y1]);
+      var x3 = Math.random() * marginX;
+      var y3 = FarmJig.PUZZLE_PADDING_TOP + (j * FarmJig.PUZZLE_PIECE_HEIGHT);
+      arr.push([x3, y3]);
 
-      var x2 = FarmJig.PUZZLE_BOARD_WIDTH + FarmJig.PUZZLE_PADDING_LEFT + Math.random() * marginX;
-      var y2 = FarmJig.PUZZLE_PADDING_TOP + (j * FarmJig.PUZZLE_PIECE_HEIGHT);
-      arr.push([x2, y2]);
+      var x4 = FarmJig.PUZZLE_BOARD_WIDTH + FarmJig.PUZZLE_PADDING_LEFT + Math.random() * marginX;
+      var y4 = FarmJig.PUZZLE_PADDING_TOP + (j * FarmJig.PUZZLE_PIECE_HEIGHT);
+      arr.push([x4, y4]);
     }
 
     arr = FarmJig.shuffle(arr);
@@ -438,7 +438,7 @@ function FarmJig(canvasID, rows, columns, mode) {
     var x = FarmJig.PUZZLE_PADDING_LEFT + (index % FarmJig.TOTAL_COLUMNS) * FarmJig.PUZZLE_PIECE_WIDTH;
     var y = FarmJig.PUZZLE_PADDING_TOP + Math.floor(index / FarmJig.TOTAL_COLUMNS) * FarmJig.PUZZLE_PIECE_HEIGHT;
 
-    return new puzzleSlot(index, x, y);
+    return new PuzzleSlot(index, x, y);
   }
 
   // Get the piece given x and y
