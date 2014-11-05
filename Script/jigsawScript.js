@@ -28,8 +28,6 @@ var Jigsaw = function() {
         Jigsaw.PUZZLE_PIECE_HEIGHT = Math.round(Jigsaw.PUZZLE_BOARD_HEIGHT / Jigsaw.TOTAL_ROWS);
 
         Jigsaw.loadGame = function () {
-            //mySelf = this; // eventene har annet "this" og må bruke denne
-
             Jigsaw.drawBackGround();
             Jigsaw.showIndex();
             
