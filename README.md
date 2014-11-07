@@ -1,4 +1,6 @@
 FarmJig
 =======
 
-Jigsaw game
+This is a simple jigsaw game made in pure JavaScript.
+
+![FarmJig](http://assert.no/assets/FarmJig.png)
